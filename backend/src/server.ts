@@ -1,13 +1,97 @@
 import express from "express";
+import cors from "cors";
+import db from "./database.js";
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
     res.send("FitTrack backend is running!");
 });
+
+// Összes edzésterv lekérése
+app.get("/api/edzestervek", async (req, res) => {
+    try {
+        const [rows] = await db.query("SELECT * FROM edzesterv ORDER BY id DESC");
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt az edzéstervek lekérésekor." });
+    }
+});
+
+// Új edzésterv létrehozása
+app.post("/api/edzestervek", async (req, res) => {
+    try {
+        const { nev } = req.body;
+
+        if (!nev || nev.trim() === "") {
+            return res.status(400).json({ message: "Az edzésterv neve kötelező." });
+        }
+
+        const [result]: any = await db.query("INSERT INTO edzesterv (nev) VALUES (?)", [nev.trim()]);
+        res.status(201).json({ id: result.insertId, nev: nev.trim() });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt az edzésterv létrehozásakor." });
+    }
+});
+
+// Gyakorlat hozzáadása egy edzéstervhez
+app.post("/api/gyakorlatok", async (req, res) => {
+    try {
+        const { nev, edzesterv_id } = req.body;
+
+        if (!nev || nev.trim() === "") {
+            return res.status(400).json({ message: "A gyakorlat neve kötelező." });
+        }
+
+        if (!edzesterv_id) {
+            return res.status(400).json({ message: "Az edzésterv azonosítója kötelező." });
+        }
+
+        const [tervek]: any = await db.query("SELECT id FROM edzesterv WHERE id = ?", [edzesterv_id]);
+
+        if (tervek.length === 0) {
+            return res.status(404).json({ message: "A megadott edzésterv nem található." });
+        }
+
+        const [result]: any = await db.query("INSERT INTO gyakorlat (nev, edzesterv_id) VALUES (?, ?)", [nev.trim(), edzesterv_id]);
+
+        res.status(201).json({ id: result.insertId, nev: nev.trim(), edzesterv_id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt a gyakorlat hozzáadásakor." });
+    }
+});
+
+// Egy edzésterv gyakorlatainak lekérése
+app.get("/api/edzestervek/:id/gyakorlatok", async (req, res) => {
+    try {
+        const edzestervId = req.params.id;
+        const [rows] = await db.query("SELECT * FROM gyakorlat WHERE edzesterv_id = ? ORDER BY id", [edzestervId]);
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt a gyakorlatok lekérésekor." });
+    }
+});
+
+// Adatbázis-kapcsolat ellenőrzése
+async function testDatabaseConnection() {
+    try {
+        const connection = await db.getConnection();
+        console.log("MySQL connection successful!");
+        connection.release();
+    } catch (error) {
+        console.error("MySQL connection failed:", error);
+    }
+}
+
+testDatabaseConnection();
 
 app.listen(PORT, () => {
     console.log(`FitTrack backend running on http://localhost:${PORT}`);
