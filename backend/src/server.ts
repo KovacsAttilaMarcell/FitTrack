@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import db from "./database.js";
+import { Ismetlesszam } from "./value-objects/Ismetlesszam.js";
+import { Terheles } from "./value-objects/Terheles.js";
 
 const app = express();
 const PORT = 3000;
@@ -77,6 +79,70 @@ app.get("/api/edzestervek/:id/gyakorlatok", async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Hiba történt a gyakorlatok lekérésekor." });
+    }
+});
+
+// Teljesített sorozat rögzítése
+app.post("/api/edzesnaplo", async (req, res) => {
+    try {
+        const { gyakorlat_id, ismetlesszam, terheles } = req.body;
+
+        if (!gyakorlat_id) {
+            return res.status(400).json({ message: "A gyakorlat azonosítója kötelező." });
+        }
+
+        let ismetlesszamVO: Ismetlesszam;
+        let terhelesVO: Terheles;
+
+        try {
+            ismetlesszamVO = new Ismetlesszam(ismetlesszam);
+            terhelesVO = new Terheles(terheles);
+        } catch (error) {
+            return res.status(400).json({
+                message: error instanceof Error ? error.message : "Érvénytelen adat."
+            });
+        }
+
+        const [gyakorlatok]: any = await db.query("SELECT id FROM gyakorlat WHERE id = ?", [gyakorlat_id]);
+
+        if (gyakorlatok.length === 0) {
+            return res.status(404).json({ message: "A megadott gyakorlat nem található." });
+        }
+
+        const [result]: any = await db.query(
+            "INSERT INTO edzesnaplo (gyakorlat_id, ismetlesszam, terheles) VALUES (?, ?, ?)",
+            [gyakorlat_id, ismetlesszamVO.getErtek(), terhelesVO.getErtek()]
+        );
+
+        res.status(201).json({
+            id: result.insertId,
+            gyakorlat_id,
+            ismetlesszam: ismetlesszamVO.getErtek(),
+            terheles: terhelesVO.getErtek()
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt az edzés rögzítésekor." });
+    }
+});
+
+// Edzésnapló lekérése
+app.get("/api/edzesnaplo", async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT edzesnaplo.id, edzesnaplo.ismetlesszam, edzesnaplo.terheles,
+                   edzesnaplo.datum, gyakorlat.nev AS gyakorlat_nev,
+                   edzesterv.nev AS edzesterv_nev
+            FROM edzesnaplo
+            JOIN gyakorlat ON edzesnaplo.gyakorlat_id = gyakorlat.id
+            JOIN edzesterv ON gyakorlat.edzesterv_id = edzesterv.id
+            ORDER BY edzesnaplo.datum DESC
+        `);
+
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt az edzésnapló lekérésekor." });
     }
 });
 

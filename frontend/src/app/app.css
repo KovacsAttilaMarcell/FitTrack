@@ -43,11 +43,13 @@ h2 {
 
 input {
     flex: 1;
+    min-width: 0;
     padding: 11px 13px;
     border: 1px solid #d1d5db;
     border-radius: 7px;
     font-size: 15px;
     outline: none;
+    box-sizing: border-box;
 }
 
 input:focus {
@@ -82,28 +84,84 @@ button:hover {
     font-size: 20px;
 }
 
-.terv ul {
-    margin: 0 0 20px;
-    padding-left: 25px;
-}
-
-.terv li {
-    margin: 7px 0;
-}
-
 .terv p {
     color: #6b7280;
     margin-bottom: 20px;
 }
 
-@media (max-width: 600px) {
+.gyakorlatok {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.gyakorlat {
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+}
+
+.gyakorlat strong {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.sorozat-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+}
+
+.naplo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.naplo-bejegyzes {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr auto;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.naplo-bejegyzes strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.naplo-bejegyzes span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.naplo-bejegyzes small {
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+@media (max-width: 700px) {
     .container {
         width: calc(100% - 24px);
         padding: 25px 0;
     }
 
-    .form {
+    .form,
+    .sorozat-form {
+        display: flex;
         flex-direction: column;
+    }
+
+    .naplo-bejegyzes {
+        grid-template-columns: 1fr;
+        gap: 8px;
     }
 
     button {

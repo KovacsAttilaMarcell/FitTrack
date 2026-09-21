@@ -24,3 +24,18 @@
 **Prompt:** Adj manuális teszteseteket az 1. heti MVP ellenőrzéséhez.
 
 **Eredmény:** Az edzésterv és gyakorlat-hozzáadás, az adatok megmaradása és az üres mezők kezelése sikeresen tesztelve lett.
+
+## 6. Edzésnapló és teljesített sorozatok
+**Prompt:** Bővítsd a FitTrack alkalmazást úgy, hogy a gyakorlatokhoz ismétlésszám és terhelés megadásával teljesített sorozatot lehessen rögzíteni, és ezek jelenjenek meg az edzésnaplóban.
+
+**Eredmény:** Elkészült az Edzésnapló adatbázistáblája, REST API-ja és Angular felülete. A rögzített sorozatok frissítés után is megmaradnak.
+
+## 7. Value Objectek
+**Prompt:** Az Ismétlésszám és Terhelés a domainvázlatnak megfelelően külön Value Objectként legyen megvalósítva és használva az edzés rögzítésekor.
+
+**Eredmény:** Elkészült az Ismetlesszam és Terheles Value Object, amelyek ellenőrzik az érvényes értékeket. A működés Postman tesztekkel is ellenőrizve lett.
+
+## 8. Felület bővítése
+**Prompt:** Igazítsd a meglévő FitTrack felületet a sorozatrögzítéshez és az edzésnapló megjelenítéséhez.
+
+**Eredmény:** A gyakorlatoknál megadható az ismétlésszám és a terhelés, az Edzésnapló pedig rendezett formában jeleníti meg a teljesített sorozatokat.

@@ -24,3 +24,53 @@
 - Művelet: Gyakorlat hozzáadása üres névvel.
 - Elvárt eredmény: Nem jön létre új gyakorlat.
 - Eredmény: Sikeres
+
+## 6. Teljesített sorozat rögzítése
+- Művelet: 8 ismétlés és 70 kg terhelés rögzítése egy gyakorlathoz.
+- Elvárt eredmény: A bejegyzés azonnal megjelenik az Edzésnaplóban.
+- Eredmény: Sikeres
+
+## 7. Edzésnapló adatainak megmaradása
+- Művelet: Az oldal frissítése a sorozat rögzítése után.
+- Elvárt eredmény: A korábban rögzített bejegyzés továbbra is megjelenik.
+- Eredmény: Sikeres
+
+## 8. Üres ismétlésszám
+- Művelet: Sorozat rögzítése üres ismétlésszámmal.
+- Elvárt eredmény: A rendszer nem rögzíti a sorozatot.
+- Eredmény: Sikeres
+
+## 9. Nulla ismétlésszám
+- Művelet: Sorozat rögzítése 0 ismétléssel.
+- Elvárt eredmény: A rendszer nem rögzíti a sorozatot.
+- Eredmény: Sikeres
+
+## 10. Negatív ismétlésszám
+- Művelet: Sorozat rögzítése negatív ismétlésszámmal.
+- Elvárt eredmény: A rendszer nem rögzíti a sorozatot.
+- Eredmény: Sikeres
+
+## 11. Üres terhelés
+- Művelet: Sorozat rögzítése üres terheléssel.
+- Elvárt eredmény: A rendszer nem rögzíti a sorozatot.
+- Eredmény: Sikeres
+
+## 12. Negatív terhelés
+- Művelet: Sorozat rögzítése negatív terheléssel.
+- Elvárt eredmény: A rendszer nem rögzíti a sorozatot.
+- Eredmény: Sikeres
+
+## 13. Nulla terhelés
+- Művelet: 10 ismétlés rögzítése 0 kg terheléssel.
+- Elvárt eredmény: A rendszer elfogadja és rögzíti a sorozatot.
+- Eredmény: Sikeres
+
+## 14. Ismétlésszám Value Object validáció
+- Művelet: 0 és 2.5 ismétlésszám küldése az API-nak.
+- Elvárt eredmény: Az API 400-as hibával elutasítja az értékeket.
+- Eredmény: Sikeres
+
+## 15. Terhelés Value Object validáció
+- Művelet: Negatív terhelés küldése az API-nak.
+- Elvárt eredmény: Az API 400-as hibával elutasítja az értéket.
+- Eredmény: Sikeres

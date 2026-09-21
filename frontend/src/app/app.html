@@ -1,6 +1,6 @@
 <div class="container">
     <h1>FitTrack</h1>
-    <p>Edzéstervek és gyakorlatok kezelése</p>
+    <p>Edzéstervek, gyakorlatok és teljesített sorozatok kezelése</p>
 
     <section>
         <h2>Új edzésterv</h2>
@@ -19,11 +19,19 @@
                     <h3>{{ terv.nev }}</h3>
 
                     @if (terv.gyakorlatok && terv.gyakorlatok.length > 0) {
-                        <ul>
+                        <div class="gyakorlatok">
                             @for (gyakorlat of terv.gyakorlatok; track gyakorlat.id) {
-                                <li>{{ gyakorlat.nev }}</li>
+                                <div class="gyakorlat">
+                                    <strong>{{ gyakorlat.nev }}</strong>
+
+                                    <div class="sorozat-form">
+                                        <input type="number" min="1" [(ngModel)]="ismetlesszamok[gyakorlat.id]" placeholder="Ismétlés">
+                                        <input type="number" min="0" step="0.5" [(ngModel)]="terhelesek[gyakorlat.id]" placeholder="Terhelés (kg)">
+                                        <button (click)="edzesRogzitese(gyakorlat)">Sorozat rögzítése</button>
+                                    </div>
+                                </div>
                             }
-                        </ul>
+                        </div>
                     } @else {
                         <p>Még nincs gyakorlat ebben az edzéstervben.</p>
                     }
@@ -36,6 +44,32 @@
             }
         } @else {
             <p>Még nincs létrehozott edzésterv.</p>
+        }
+    </section>
+
+    <section>
+        <h2>Edzésnapló</h2>
+
+        @if (edzesnaplo().length > 0) {
+            <div class="naplo">
+                @for (bejegyzes of edzesnaplo(); track bejegyzes.id) {
+                    <div class="naplo-bejegyzes">
+                        <div>
+                            <strong>{{ bejegyzes.gyakorlat_nev }}</strong>
+                            <span>{{ bejegyzes.edzesterv_nev }}</span>
+                        </div>
+
+                        <div>
+                            {{ bejegyzes.ismetlesszam }} ismétlés ×
+                            {{ bejegyzes.terheles }} kg
+                        </div>
+
+                        <small>{{ bejegyzes.datum | date:'yyyy.MM.dd. HH:mm' }}</small>
+                    </div>
+                }
+            </div>
+        } @else {
+            <p>Még nincs rögzített edzés.</p>
         }
     </section>
 </div>
