@@ -146,6 +146,44 @@ app.get("/api/edzesnaplo", async (req, res) => {
     }
 });
 
+app.get("/api/sportolok", async (req, res) => {
+    try {
+        const [rows] = await db.query("SELECT * FROM sportolo ORDER BY id DESC");
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt a sportolók lekérésekor." });
+    }
+});
+
+app.post("/api/sportolok", async (req, res) => {
+    try {
+        const { nev, cel, felszereles } = req.body;
+
+        if (!nev || nev.trim() === "") {
+            return res.status(400).json({ message: "A sportoló neve kötelező." });
+        }
+
+        const tisztitottCel = typeof cel === "string" && cel.trim() !== "" ? cel.trim() : null;
+        const tisztitottFelszereles = typeof felszereles === "string" && felszereles.trim() !== "" ? felszereles.trim() : null;
+
+        const [result]: any = await db.query(
+            "INSERT INTO sportolo (nev, cel, felszereles) VALUES (?, ?, ?)",
+            [nev.trim(), tisztitottCel, tisztitottFelszereles]
+        );
+
+        res.status(201).json({
+            id: result.insertId,
+            nev: nev.trim(),
+            cel: tisztitottCel,
+            felszereles: tisztitottFelszereles
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt a sportoló létrehozásakor." });
+    }
+});
+
 // Adatbázis-kapcsolat ellenőrzése
 async function testDatabaseConnection() {
     try {

@@ -24,6 +24,13 @@ interface Edzesnaplo {
     edzesterv_nev: string;
 }
 
+interface Sportolo {
+    id: number;
+    nev: string;
+    cel: string | null;
+    felszereles: string | null;
+}
+
 @Component({
     selector: 'app-root',
     imports: [CommonModule, FormsModule],
@@ -33,17 +40,23 @@ interface Edzesnaplo {
 export class App implements OnInit {
     edzestervek = signal<Edzesterv[]>([]);
     edzesnaplo = signal<Edzesnaplo[]>([]);
+    sportolok = signal<Sportolo[]>([]);
 
     ujEdzestervNev = '';
     gyakorlatNevek: { [key: number]: string } = {};
     ismetlesszamok: { [key: number]: number | null } = {};
     terhelesek: { [key: number]: number | null } = {};
 
+    ujSportoloNev = '';
+    ujSportoloCel = '';
+    ujSportoloFelszereles = '';
+
     constructor(private http: HttpClient) {}
 
     ngOnInit() {
         this.edzestervekBetoltese();
         this.edzesnaploBetoltese();
+        this.sportolokBetoltese();
     }
 
     edzestervekBetoltese() {
@@ -59,9 +72,7 @@ export class App implements OnInit {
     gyakorlatokBetoltese(terv: Edzesterv) {
         this.http.get<Gyakorlat[]>(`http://localhost:3000/api/edzestervek/${terv.id}/gyakorlatok`).subscribe({
             next: (adatok) => {
-                this.edzestervek.update(tervek =>
-                    tervek.map(t => t.id === terv.id ? { ...t, gyakorlatok: adatok } : t)
-                );
+                this.edzestervek.update(tervek => tervek.map(t => t.id === terv.id ? { ...t, gyakorlatok: adatok } : t));
             },
             error: (hiba) => console.error('Hiba a gyakorlatok betöltésekor:', hiba)
         });
@@ -112,6 +123,27 @@ export class App implements OnInit {
         this.http.get<Edzesnaplo[]>('http://localhost:3000/api/edzesnaplo').subscribe({
             next: (adatok) => this.edzesnaplo.set(adatok),
             error: (hiba) => console.error('Hiba az edzésnapló betöltésekor:', hiba)
+        });
+    }
+
+    sportolokBetoltese() {
+        this.http.get<Sportolo[]>('http://localhost:3000/api/sportolok').subscribe({
+            next: (adatok) => this.sportolok.set(adatok),
+            error: (hiba) => console.error('Hiba a sportolók betöltésekor:', hiba)
+        });
+    }
+
+    sportoloHozzaadasa() {
+        if (!this.ujSportoloNev.trim()) return;
+
+        this.http.post('http://localhost:3000/api/sportolok', { nev: this.ujSportoloNev, cel: this.ujSportoloCel, felszereles: this.ujSportoloFelszereles }).subscribe({
+            next: () => {
+                this.ujSportoloNev = '';
+                this.ujSportoloCel = '';
+                this.ujSportoloFelszereles = '';
+                this.sportolokBetoltese();
+            },
+            error: (hiba) => console.error('Hiba a sportoló hozzáadásakor:', hiba)
         });
     }
 }

@@ -3,6 +3,31 @@
     <p>Edzéstervek, gyakorlatok és teljesített sorozatok kezelése</p>
 
     <section>
+        <h2>Sportolók</h2>
+
+        <div class="form sportolo-form">
+            <input type="text" [(ngModel)]="ujSportoloNev" placeholder="Sportoló neve">
+            <input type="text" [(ngModel)]="ujSportoloCel" placeholder="Cél">
+            <input type="text" [(ngModel)]="ujSportoloFelszereles" placeholder="Felszerelés">
+            <button (click)="sportoloHozzaadasa()"> Sportoló hozzáadása</button>
+        </div>
+
+        @if (sportolok().length > 0) {
+            <div class="sportolok">
+                @for (sportolo of sportolok(); track sportolo.id) {
+                    <div class="sportolo">
+                        <strong>{{ sportolo.nev }}</strong>
+                        <span>Cél: {{ sportolo.cel || 'Nincs megadva' }}</span>
+                        <span>Felszerelés: {{ sportolo.felszereles || 'Nincs megadva' }}</span>
+                    </div>
+                }
+            </div>
+        } @else {
+            <p>Még nincs rögzített sportoló.</p>
+        }
+    </section>
+
+    <section>
         <h2>Új edzésterv</h2>
         <div class="form">
             <input type="text" [(ngModel)]="ujEdzestervNev" placeholder="Edzésterv neve">

@@ -74,3 +74,28 @@
 - Művelet: Negatív terhelés küldése az API-nak.
 - Elvárt eredmény: Az API 400-as hibával elutasítja az értéket.
 - Eredmény: Sikeres
+
+## 16. Sportoló létrehozása
+- Művelet: Sportoló létrehozása névvel, céllal és felszereléssel.
+- Elvárt eredmény: A sportoló sikeresen létrejön és megjelenik a listában.
+- Eredmény: Sikeres
+
+## 17. Sportoló adatainak megmaradása
+- Művelet: Az oldal frissítése a sportoló létrehozása után.
+- Elvárt eredmény: A korábban létrehozott sportoló továbbra is megjelenik.
+- Eredmény: Sikeres
+
+## 18. Sportoló létrehozása cél és felszerelés nélkül
+- Művelet: Sportoló létrehozása névvel, de cél és felszerelés megadása nélkül.
+- Elvárt eredmény: A sportoló létrejön, a hiányzó adatok pedig „Nincs megadva” értékkel jelennek meg.
+- Eredmény: Sikeres
+
+## 19. Üres sportolónév
+- Művelet: Sportoló létrehozása üres névvel.
+- Elvárt eredmény: Az API 400-as hibával elutasítja a kérést.
+- Eredmény: Sikeres
+
+## 20. Sportolók lekérése
+- Művelet: A sportolók lekérése a GET /api/sportolok végponton.
+- Elvárt eredmény: Az adatbázisban tárolt sportolók adatai visszaérkeznek.
+- Eredmény: Sikeres

@@ -30,3 +30,10 @@ CREATE TABLE IF NOT EXISTS edzesnaplo (
         REFERENCES gyakorlat(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS sportolo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nev VARCHAR(100) NOT NULL,
+    cel VARCHAR(255),
+    felszereles TEXT
+);

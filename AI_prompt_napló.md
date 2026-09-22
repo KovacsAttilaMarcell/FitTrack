@@ -39,3 +39,23 @@
 **Prompt:** Igazítsd a meglévő FitTrack felületet a sorozatrögzítéshez és az edzésnapló megjelenítéséhez.
 
 **Eredmény:** A gyakorlatoknál megadható az ismétlésszám és a terhelés, az Edzésnapló pedig rendezett formában jeleníti meg a teljesített sorozatokat.
+
+## 9. Sportoló entitás
+**Prompt:** Bővítsd a FitTrack alkalmazást Sportoló entitással, amelyhez név, cél és rendelkezésre álló felszerelés tartozik.
+
+**Eredmény:** Elkészült a Sportoló adatbázistáblája, valamint a sportolók létrehozására és lekérésére szolgáló REST API.
+
+## 10. Sportoló adatok validálása
+**Prompt:** A sportoló neve legyen kötelező, a cél és a felszerelés viszont lehessen hiányzó adat.
+
+**Eredmény:** A backend elutasítja az üres sportolói nevet, a hiányzó cél és felszerelés pedig null értékként tárolható. Ez előkészíti a személyre szabott edzésterv-ajánlás kritikus szabályát.
+
+## 11. Sportolók Angular felülete
+**Prompt:** Egészítsd ki a FitTrack Angular felületét sportolók hozzáadásával és listázásával, valamint jelenítsd meg a célt és a felszerelést.
+
+**Eredmény:** A felületen sportoló hozható létre névvel, céllal és felszereléssel. A sportolók adatai rendezett formában jelennek meg, a hiányzó adatok pedig „Nincs megadva” szöveggel láthatók.
+
+## 12. Sportoló funkció tesztelése
+**Prompt:** Ellenőrizd a Sportoló funkció létrehozását, lekérését, adatmegmaradását és a kötelező név validációját.
+
+**Eredmény:** A Sportoló funkció backend és frontendtesztjei sikeresen lefutottak.
