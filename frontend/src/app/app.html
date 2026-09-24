@@ -28,6 +28,34 @@
     </section>
 
     <section>
+        <h2>Felhasználók és szerepkörök</h2>
+
+        <div class="form felhasznalo-form">
+            <input type="text" [(ngModel)]="ujFelhasznaloNev" placeholder="Felhasználó neve">
+
+            <select [(ngModel)]="ujFelhasznaloSzerepkor">
+                <option value="sportolo">Sportoló</option>
+                <option value="edzo">Edző</option>
+            </select>
+
+            <button (click)="felhasznaloHozzaadasa()">Felhasználó hozzáadása</button>
+        </div>
+
+        @if (felhasznalok().length > 0) {
+            <div class="felhasznalok">
+                @for (felhasznalo of felhasznalok(); track felhasznalo.id) {
+                    <div class="felhasznalo">
+                        <strong>{{ felhasznalo.nev }}</strong>
+                        <span>Szerepkör: {{ felhasznalo.szerepkor === 'sportolo' ? 'Sportoló' : 'Edző' }}</span>
+                    </div>
+                }
+            </div>
+        } @else {
+            <p>Még nincs létrehozott felhasználó.</p>
+        }
+    </section>
+
+    <section>
         <h2>Új edzésterv</h2>
         <div class="form">
             <input type="text" [(ngModel)]="ujEdzestervNev" placeholder="Edzésterv neve">
@@ -84,10 +112,7 @@
                             <span>{{ bejegyzes.edzesterv_nev }}</span>
                         </div>
 
-                        <div>
-                            {{ bejegyzes.ismetlesszam }} ismétlés ×
-                            {{ bejegyzes.terheles }} kg
-                        </div>
+                        <div>{{ bejegyzes.ismetlesszam }} ismétlés × {{ bejegyzes.terheles }} kg</div>
 
                         <small>{{ bejegyzes.datum | date:'yyyy.MM.dd. HH:mm' }}</small>
                     </div>

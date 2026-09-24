@@ -184,6 +184,41 @@ app.post("/api/sportolok", async (req, res) => {
     }
 });
 
+app.get("/api/felhasznalok", async (req, res) => {
+    try {
+        const [rows] = await db.query("SELECT * FROM felhasznalo ORDER BY id DESC");
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt a felhasználók lekérésekor."});
+    }
+});
+
+app.post("/api/felhasznalok", async (req, res) => {
+    try {
+        const { nev, szerepkor } = req.body;
+
+        if (!nev || typeof nev !== "string" || nev.trim() === "") {
+            return res.status(400).json({ message: "A felhasználó neve kötelező." });
+        }
+
+        if (szerepkor !== "sportolo" && szerepkor !== "edzo") {
+            return res.status(400).json({ message: "A szerepkör csak sportolo vagy edzo lehet." });
+        }
+
+        const [result]: any = await db.query( "INSERT INTO felhasznalo (nev, szerepkor) VALUES (?, ?)", [nev.trim(), szerepkor]);
+
+        res.status(201).json({
+            id: result.insertId,
+            nev: nev.trim(),
+            szerepkor
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Hiba történt a felhasználó létrehozásakor." });
+    }
+});
+
 // Adatbázis-kapcsolat ellenőrzése
 async function testDatabaseConnection() {
     try {

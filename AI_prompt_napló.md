@@ -59,3 +59,23 @@
 **Prompt:** Ellenőrizd a Sportoló funkció létrehozását, lekérését, adatmegmaradását és a kötelező név validációját.
 
 **Eredmény:** A Sportoló funkció backend és frontendtesztjei sikeresen lefutottak.
+
+## 13. Felhasználói szerepkörök
+**Prompt:** Bővítsd a FitTrack alkalmazást Sportoló és Edző felhasználói szerepkörökkel.
+
+**Eredmény:** Elkészült a felhasználók adatbázistáblája, amely sportolo és edzo szerepkört támogat.
+
+## 14. Szerepkörök backend kezelése
+**Prompt:** Készíts REST API-t a felhasználók létrehozásához és lekéréséhez, és csak a sportolo vagy edzo szerepkört engedélyezd.
+
+**Eredmény:** Elkészült a felhasználók létrehozása és lekérése. Az érvénytelen szerepköröket a backend 400-as hibával elutasítja.
+
+## 15. Szerepkörök Angular felülete
+**Prompt:** Egészítsd ki a FitTrack Angular felületét a felhasználók létrehozásával, listázásával és a Sportoló vagy Edző szerepkör kiválasztásával.
+
+**Eredmény:** A felületen létrehozható Sportoló vagy Edző szerepkörű felhasználó, és a felhasználók a hozzájuk tartozó szerepkörrel jelennek meg.
+
+## 16. Szerepkörök tesztelése
+**Prompt:** Ellenőrizd a Sportoló és Edző szerepkör létrehozását, az érvénytelen szerepkör elutasítását, a lekérést és az adatok megmaradását.
+
+**Eredmény:** A szerepkör-kezelés backend és frontendtesztjei sikeresen lefutottak.

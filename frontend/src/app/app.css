@@ -177,6 +177,51 @@ button:hover {
     font-size: 14px;
 }
 
+.felhasznalo-form {
+    margin-bottom: 20px;
+}
+
+.felhasznalo-form select {
+    padding: 11px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: white;
+    color: #1f2937;
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+}
+
+.felhasznalo-form select:focus {
+    border-color: #2563eb;
+}
+
+.felhasznalok {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.felhasznalo {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.felhasznalo strong {
+    font-size: 16px;
+}
+
+.felhasznalo span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
 @media (max-width: 700px) {
     .container {
         width: calc(100% - 24px);
@@ -188,12 +233,12 @@ button:hover {
         flex-direction: column;
     }
 
-    .naplo-bejegyzes, .sportolo {
+    .naplo-bejegyzes, .sportolo, .felhasznalo {
         grid-template-columns: 1fr;
         gap: 8px;
     }
 
-    button {
+    button, .felhasznalo-form select {
         width: 100%;
     }
 }

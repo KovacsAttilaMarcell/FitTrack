@@ -37,3 +37,9 @@ CREATE TABLE IF NOT EXISTS sportolo (
     cel VARCHAR(255),
     felszereles TEXT
 );
+
+CREATE TABLE IF NOT EXISTS felhasznalo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nev VARCHAR(100) NOT NULL,
+    szerepkor ENUM('sportolo', 'edzo') NOT NULL
+);

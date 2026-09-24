@@ -31,6 +31,12 @@ interface Sportolo {
     felszereles: string | null;
 }
 
+interface Felhasznalo {
+    id: number;
+    nev: string;
+    szerepkor: 'sportolo' | 'edzo';
+}
+
 @Component({
     selector: 'app-root',
     imports: [CommonModule, FormsModule],
@@ -41,6 +47,7 @@ export class App implements OnInit {
     edzestervek = signal<Edzesterv[]>([]);
     edzesnaplo = signal<Edzesnaplo[]>([]);
     sportolok = signal<Sportolo[]>([]);
+    felhasznalok = signal<Felhasznalo[]>([]);
 
     ujEdzestervNev = '';
     gyakorlatNevek: { [key: number]: string } = {};
@@ -51,12 +58,16 @@ export class App implements OnInit {
     ujSportoloCel = '';
     ujSportoloFelszereles = '';
 
+    ujFelhasznaloNev = '';
+    ujFelhasznaloSzerepkor: 'sportolo' | 'edzo' = 'sportolo';
+
     constructor(private http: HttpClient) {}
 
     ngOnInit() {
         this.edzestervekBetoltese();
         this.edzesnaploBetoltese();
         this.sportolokBetoltese();
+        this.felhasznalokBetoltese();
     }
 
     edzestervekBetoltese() {
@@ -144,6 +155,26 @@ export class App implements OnInit {
                 this.sportolokBetoltese();
             },
             error: (hiba) => console.error('Hiba a sportoló hozzáadásakor:', hiba)
+        });
+    }
+
+    felhasznalokBetoltese() {
+        this.http.get<Felhasznalo[]>('http://localhost:3000/api/felhasznalok').subscribe({
+            next: (adatok) => this.felhasznalok.set(adatok),
+            error: (hiba) => console.error('Hiba a felhasználók betöltésekor:', hiba)
+        });
+    }
+
+    felhasznaloHozzaadasa() {
+        if (!this.ujFelhasznaloNev.trim()) return;
+
+        this.http.post('http://localhost:3000/api/felhasznalok', { nev: this.ujFelhasznaloNev, szerepkor: this.ujFelhasznaloSzerepkor }).subscribe({
+            next: () => {
+                this.ujFelhasznaloNev = '';
+                this.ujFelhasznaloSzerepkor = 'sportolo';
+                this.felhasznalokBetoltese();
+            },
+            error: (hiba) => console.error('Hiba a felhasználó hozzáadásakor:', hiba)
         });
     }
 }

@@ -99,3 +99,28 @@
 - Művelet: A sportolók lekérése a GET /api/sportolok végponton.
 - Elvárt eredmény: Az adatbázisban tárolt sportolók adatai visszaérkeznek.
 - Eredmény: Sikeres
+
+## 21. Sportoló szerepkörű felhasználó létrehozása
+- Művelet: Felhasználó létrehozása sportolo szerepkörrel.
+- Elvárt eredmény: A felhasználó sikeresen létrejön Sportoló szerepkörrel.
+- Eredmény: Sikeres
+
+## 22. Edző szerepkörű felhasználó létrehozása
+- Művelet: Felhasználó létrehozása edzo szerepkörrel.
+- Elvárt eredmény: A felhasználó sikeresen létrejön Edző szerepkörrel.
+- Eredmény: Sikeres
+
+## 23. Érvénytelen szerepkör
+- Művelet: Felhasználó létrehozása admin szerepkörrel.
+- Elvárt eredmény: Az API 400-as hibával elutasítja a kérést.
+- Eredmény: Sikeres
+
+## 24. Felhasználók lekérése
+- Művelet: A felhasználók lekérése a GET /api/felhasznalok végponton.
+- Elvárt eredmény: A létrehozott felhasználók a megfelelő szerepkörrel jelennek meg.
+- Eredmény: Sikeres
+
+## 25. Felhasználó létrehozása a felületről
+- Művelet: Edző szerepkörű felhasználó létrehozása az Angular felületen.
+- Elvárt eredmény: A felhasználó azonnal megjelenik, a mezők alaphelyzetbe állnak, és oldalfrissítés után is megmarad.
+- Eredmény: Sikeres
