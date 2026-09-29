@@ -7,7 +7,7 @@
 }
 
 .container {
-    width: min(900px, calc(100% - 40px));
+    width: min(1300px, calc(100% - 40px));
     margin: 0 auto;
     padding: 50px 0;
 }
@@ -29,6 +29,65 @@ section {
     margin-bottom: 25px;
     border-radius: 12px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.sportolok-section {
+    border-top: 4px solid #2563eb;
+}
+
+.sportolok-section h2 {
+    color: #1d4ed8;
+}
+
+.felhasznalok-section {
+    border-top: 4px solid #16a34a;
+}
+
+.felhasznalok-section h2 {
+    color: #15803d;
+}
+
+.uj-terv-section {
+    border-top: 4px solid #7c3aed;
+}
+
+.uj-terv-section h2 {
+    color: #6d28d9;
+}
+
+.edzestervek-section {
+    border-top: 4px solid #7c3aed;
+}
+
+.edzestervek-section h2 {
+    color: #6d28d9;
+}
+
+.naplo-section {
+    border-top: 4px solid #ea580c;
+}
+
+.naplo-section h2 {
+    color: #c2410c;
+}
+
+.felso-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.also-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.felso-grid section,
+.also-grid section {
+    margin-bottom: 25px;
 }
 
 h2 {
@@ -159,7 +218,7 @@ button:hover {
 
 .sportolo {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.5fr;
+    grid-template-columns: 1fr 1fr 1.5fr auto;
     align-items: center;
     gap: 15px;
     padding: 15px;
@@ -204,7 +263,7 @@ button:hover {
 
 .felhasznalo {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 15px;
     padding: 15px;
@@ -222,10 +281,83 @@ button:hover {
     font-size: 14px;
 }
 
+.szerepkor {
+    width: fit-content;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px !important;
+    font-weight: 600;
+}
+
+.sportolo-szerepkor {
+    color: #1d4ed8 !important;
+    background: #dbeafe;
+}
+
+.edzo-szerepkor {
+    color: #15803d !important;
+    background: #dcfce7;
+}
+
+.ajanlas {
+    grid-column: 1 / -1;
+    margin-top: 5px;
+    padding: 18px;
+    border: 1px solid #dbeafe;
+    border-radius: 8px;
+    background: white;
+}
+
+.ajanlas h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+    color: #1d4ed8;
+}
+
+.ajanlott-gyakorlatok {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ajanlott-gyakorlat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    background: #f9fafb;
+}
+
+.ajanlott-gyakorlat strong {
+    font-size: 15px;
+    color: #1f2937;
+}
+
+.ajanlott-gyakorlat span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.ajanlas-hiba {
+    grid-column: 1 / -1;
+    padding: 10px 12px;
+    border: 1px solid #fecaca;
+    border-radius: 7px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 14px;
+}
+
 @media (max-width: 700px) {
     .container {
         width: calc(100% - 24px);
         padding: 25px 0;
+    }
+
+    .felso-grid, .also-grid {
+        grid-template-columns: 1fr;
     }
 
     .form, .sorozat-form {

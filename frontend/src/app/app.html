@@ -2,68 +2,127 @@
     <h1>FitTrack</h1>
     <p>Edzéstervek, gyakorlatok és teljesített sorozatok kezelése</p>
 
-    <section>
-        <h2>Sportolók</h2>
+    <div class="felso-grid">
+        <section class="sportolok-section">
+            <h2>Sportolók</h2>
 
-        <div class="form sportolo-form">
-            <input type="text" [(ngModel)]="ujSportoloNev" placeholder="Sportoló neve">
-            <input type="text" [(ngModel)]="ujSportoloCel" placeholder="Cél">
-            <input type="text" [(ngModel)]="ujSportoloFelszereles" placeholder="Felszerelés">
-            <button (click)="sportoloHozzaadasa()"> Sportoló hozzáadása</button>
-        </div>
-
-        @if (sportolok().length > 0) {
-            <div class="sportolok">
-                @for (sportolo of sportolok(); track sportolo.id) {
-                    <div class="sportolo">
-                        <strong>{{ sportolo.nev }}</strong>
-                        <span>Cél: {{ sportolo.cel || 'Nincs megadva' }}</span>
-                        <span>Felszerelés: {{ sportolo.felszereles || 'Nincs megadva' }}</span>
-                    </div>
-                }
+            <div class="form sportolo-form">
+                <input type="text" [(ngModel)]="ujSportoloNev" placeholder="Sportoló neve">
+                <input type="text" [(ngModel)]="ujSportoloCel" placeholder="Cél">
+                <input type="text" [(ngModel)]="ujSportoloFelszereles" placeholder="Felszerelés">
+                <button (click)="sportoloHozzaadasa()">Sportoló hozzáadása</button>
             </div>
-        } @else {
-            <p>Még nincs rögzített sportoló.</p>
-        }
-    </section>
 
-    <section>
-        <h2>Felhasználók és szerepkörök</h2>
+            @if (sportolok().length > 0) {
+                <div class="sportolok">
+                    @for (sportolo of sportolok(); track sportolo.id) {
+                        <div class="sportolo">
+                            <strong>{{ sportolo.nev }}</strong>
+                            <span>Cél: {{ sportolo.cel || 'Nincs megadva' }}</span>
+                            <span>Felszerelés: {{ sportolo.felszereles || 'Nincs megadva' }}</span>
 
-        <div class="form felhasznalo-form">
-            <input type="text" [(ngModel)]="ujFelhasznaloNev" placeholder="Felhasználó neve">
+                            <button (click)="edzestervAjanlasKeszitese(sportolo)" [disabled]="ajanlasBetolteseSportoloId() !== null">
+                                {{ ajanlasBetolteseSportoloId() === sportolo.id ? 'Ajánlás készítése...' : 'Edzésterv ajánlása' }}
+                            </button>
 
-            <select [(ngModel)]="ujFelhasznaloSzerepkor">
-                <option value="sportolo">Sportoló</option>
-                <option value="edzo">Edző</option>
-            </select>
+                            @if (kivalasztottSportoloId() === sportolo.id && ajanlasHiba()) {
+                                <div class="ajanlas-hiba">{{ ajanlasHiba() }}</div>
+                            }
 
-            <button (click)="felhasznaloHozzaadasa()">Felhasználó hozzáadása</button>
-        </div>
+                            @if (edzestervAjanlasok()[sportolo.id]; as ajanlasAdat) {
+                                <div class="ajanlas">
+                                    <h3>{{ ajanlasAdat.ajanlas.tervNev }}</h3>
 
-        @if (felhasznalok().length > 0) {
-            <div class="felhasznalok">
-                @for (felhasznalo of felhasznalok(); track felhasznalo.id) {
-                    <div class="felhasznalo">
-                        <strong>{{ felhasznalo.nev }}</strong>
-                        <span>Szerepkör: {{ felhasznalo.szerepkor === 'sportolo' ? 'Sportoló' : 'Edző' }}</span>
-                    </div>
-                }
+                                    <div class="ajanlott-gyakorlatok">
+                                        @for (gyakorlat of ajanlasAdat.ajanlas.gyakorlatok; track gyakorlat.nev) {
+                                            <div class="ajanlott-gyakorlat">
+                                                <strong>{{ gyakorlat.nev }}</strong>
+                                                <span>{{ gyakorlat.sorozatok }} sorozat × {{ gyakorlat.ismetles }} {{ gyakorlat.mertekegyseg }}</span>
+                                                <span>Felszerelés: {{ gyakorlat.felszereles || 'Nem szükséges' }}</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            } @else {
+                <p>Még nincs rögzített sportoló.</p>
+            }
+        </section>
+
+        <section class="felhasznalok-section">
+            <h2>Felhasználók és szerepkörök</h2>
+
+            <div class="form felhasznalo-form">
+                <input type="text" [(ngModel)]="ujFelhasznaloNev" placeholder="Új felhasználó">
+
+                <select [(ngModel)]="ujFelhasznaloSzerepkor">
+                    <option value="sportolo">Sportoló</option>
+                    <option value="edzo">Edző</option>
+                </select>
+
+                <button (click)="felhasznaloHozzaadasa()">Felhasználó hozzáadása</button>
             </div>
-        } @else {
-            <p>Még nincs létrehozott felhasználó.</p>
-        }
-    </section>
 
-    <section>
-        <h2>Új edzésterv</h2>
-        <div class="form">
-            <input type="text" [(ngModel)]="ujEdzestervNev" placeholder="Edzésterv neve">
-            <button (click)="edzestervHozzaadasa()">Hozzáadás</button>
-        </div>
-    </section>
+            @if (felhasznalok().length > 0) {
+                <div class="felhasznalok">
+                    @for (felhasznalo of felhasznalok(); track felhasznalo.id) {
+                        <div class="felhasznalo">
+                            <strong>{{ felhasznalo.nev }}</strong>
 
-    <section>
+                            <span
+                                class="szerepkor"
+                                [class.sportolo-szerepkor]="felhasznalo.szerepkor === 'sportolo'"
+                                [class.edzo-szerepkor]="felhasznalo.szerepkor === 'edzo'">
+                                {{ felhasznalo.szerepkor === 'sportolo' ? 'Sportoló' : 'Edző' }}
+                            </span>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <p>Még nincs létrehozott felhasználó.</p>
+            }
+        </section>
+
+    </div>
+
+    <div class="also-grid">
+        <section class="uj-terv-section">
+            <h2>Új edzésterv</h2>
+
+            <div class="form">
+                <input type="text" [(ngModel)]="ujEdzestervNev" placeholder="Edzésterv neve">
+                <button (click)="edzestervHozzaadasa()">Hozzáadás</button>
+            </div>
+        </section>
+
+        <section class="naplo-section">
+            <h2>Edzésnapló</h2>
+
+            @if (edzesnaplo().length > 0) {
+                <div class="naplo">
+                    @for (bejegyzes of edzesnaplo(); track bejegyzes.id) {
+                        <div class="naplo-bejegyzes">
+                            <div>
+                                <strong>{{ bejegyzes.gyakorlat_nev }}</strong>
+                                <span>{{ bejegyzes.edzesterv_nev }}</span>
+                            </div>
+                            <div> {{ bejegyzes.ismetlesszam }} ismétlés × {{ bejegyzes.terheles }} kg</div>
+                            <small>{{ bejegyzes.datum | date:'yyyy.MM.dd. HH:mm' }}</small>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <p>Még nincs rögzített edzés.</p>
+            }
+        </section>
+
+    </div>
+
+    <!-- Edzéstervek teljes szélességben -->
+    <section class="edzestervek-section">
         <h2>Edzéstervek</h2>
 
         @if (edzestervek().length > 0) {
@@ -76,11 +135,10 @@
                             @for (gyakorlat of terv.gyakorlatok; track gyakorlat.id) {
                                 <div class="gyakorlat">
                                     <strong>{{ gyakorlat.nev }}</strong>
-
                                     <div class="sorozat-form">
                                         <input type="number" min="1" [(ngModel)]="ismetlesszamok[gyakorlat.id]" placeholder="Ismétlés">
                                         <input type="number" min="0" step="0.5" [(ngModel)]="terhelesek[gyakorlat.id]" placeholder="Terhelés (kg)">
-                                        <button (click)="edzesRogzitese(gyakorlat)">Sorozat rögzítése</button>
+                                        <button (click)="edzesRogzitese(gyakorlat)"> Sorozat rögzítése</button>
                                     </div>
                                 </div>
                             }
@@ -91,35 +149,12 @@
 
                     <div class="form">
                         <input type="text" [(ngModel)]="gyakorlatNevek[terv.id]" placeholder="Gyakorlat neve">
-                        <button (click)="gyakorlatHozzaadasa(terv)">Gyakorlat hozzáadása</button>
+                        <button (click)="gyakorlatHozzaadasa(terv)"> Gyakorlat hozzáadása</button>
                     </div>
                 </div>
             }
         } @else {
             <p>Még nincs létrehozott edzésterv.</p>
-        }
-    </section>
-
-    <section>
-        <h2>Edzésnapló</h2>
-
-        @if (edzesnaplo().length > 0) {
-            <div class="naplo">
-                @for (bejegyzes of edzesnaplo(); track bejegyzes.id) {
-                    <div class="naplo-bejegyzes">
-                        <div>
-                            <strong>{{ bejegyzes.gyakorlat_nev }}</strong>
-                            <span>{{ bejegyzes.edzesterv_nev }}</span>
-                        </div>
-
-                        <div>{{ bejegyzes.ismetlesszam }} ismétlés × {{ bejegyzes.terheles }} kg</div>
-
-                        <small>{{ bejegyzes.datum | date:'yyyy.MM.dd. HH:mm' }}</small>
-                    </div>
-                }
-            </div>
-        } @else {
-            <p>Még nincs rögzített edzés.</p>
         }
     </section>
 </div>

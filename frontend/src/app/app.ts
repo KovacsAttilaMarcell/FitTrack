@@ -37,6 +37,22 @@ interface Felhasznalo {
     szerepkor: 'sportolo' | 'edzo';
 }
 
+interface AjanlottGyakorlat {
+    nev: string;
+    sorozatok: number;
+    ismetles: number;
+    mertekegyseg: string;
+    felszereles: string;
+}
+
+interface EdzestervAjanlas {
+    sportolo: Sportolo;
+    ajanlas: {
+        tervNev: string;
+        gyakorlatok: AjanlottGyakorlat[];
+    };
+}
+
 @Component({
     selector: 'app-root',
     imports: [CommonModule, FormsModule],
@@ -48,6 +64,10 @@ export class App implements OnInit {
     edzesnaplo = signal<Edzesnaplo[]>([]);
     sportolok = signal<Sportolo[]>([]);
     felhasznalok = signal<Felhasznalo[]>([]);
+    edzestervAjanlasok = signal<Record<number, EdzestervAjanlas>>({});
+    ajanlasHiba = signal('');
+    ajanlasBetolteseSportoloId = signal<number | null>(null);
+    kivalasztottSportoloId = signal<number | null>(null);
 
     ujEdzestervNev = '';
     gyakorlatNevek: { [key: number]: string } = {};
@@ -175,6 +195,24 @@ export class App implements OnInit {
                 this.felhasznalokBetoltese();
             },
             error: (hiba) => console.error('Hiba a felhasználó hozzáadásakor:', hiba)
+        });
+    }
+
+    edzestervAjanlasKeszitese(sportolo: Sportolo) {
+        this.ajanlasHiba.set('');
+        this.kivalasztottSportoloId.set(sportolo.id);
+        this.ajanlasBetolteseSportoloId.set(sportolo.id);
+
+        this.http.post<EdzestervAjanlas>(`http://localhost:3000/api/sportolok/${sportolo.id}/ajanlas`, {}).subscribe({
+            next: (adatok) => {
+                this.edzestervAjanlasok.update(ajanlasok => ({ ...ajanlasok, [sportolo.id]: adatok }));
+                this.ajanlasBetolteseSportoloId.set(null);
+            },
+            error: (hiba) => {
+                console.error('Hiba az edzésterv-ajánlásnál:', hiba);
+                this.ajanlasHiba.set(hiba.error?.message || 'Hiba történt az edzésterv-ajánlás elkészítésekor.');
+                this.ajanlasBetolteseSportoloId.set(null);
+            }
         });
     }
 }
