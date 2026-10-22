@@ -149,3 +149,15 @@
 **Prompt:** Rendezd át a FitTrack felületét úgy, hogy a fő funkciók ne kizárólag egymás alatt jelenjenek meg, és a felület áttekinthetőbb, alkalmazásszerűbb legyen.
 
 **Eredmény:** A felület reszponzív, többoszlopos elrendezést kapott. A Sportolók és Felhasználók, valamint az Új edzésterv és Edzésnapló egymás mellett jelennek meg nagyobb képernyőn, az Edzéstervek pedig teljes szélességben maradtak. A fő funkciók visszafogott színkódolást kaptak.
+
+## 31. Felső navigációs sáv kialakítása
+
+**Prompt:** A FitTrack alkalmazás felhasználói felületének átalakítása közös felső navigációs sávval, hogy az öt különálló funkcionális rész ne egyszerre jelenjen meg. A meglévő funkciók és a backend működésének megtartása mellett négy menüpont kialakítása: Sportolók, Felhasználók, Edzéstervek és Edzésnapló.
+
+**Eredmény:** Az Angular felület felső navigációs sávot kapott. Az egyes funkciók külön nézetekben jelennek meg, az új edzésterv létrehozása pedig az Edzéstervek menüpontba került. Az átalakítás az `app.ts`, `app.html` és `app.css` fájlokat érintette, a backend és az adatbázis változatlan maradt.
+
+## 32. FitTrack fejléc ikonjának módosítása
+
+**Prompt:** A FitTrack alkalmazás fejlécében található rombusz alakú ikon lecserélése egy konditermi súlyzóikonra a Google Material Symbols `fitness_center` ikonjának felhasználásával, a meglévő színek és elrendezés megtartásával.
+
+**Eredmény:** Az `app.html` fájlban a korábbi rombusz helyére a `fitness_center` ikon került. A fejléc világoskék ikonháttere, a FitTrack felirat és a navigációs sáv megjelenése változatlan maradt.

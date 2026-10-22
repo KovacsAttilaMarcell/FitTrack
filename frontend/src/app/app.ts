@@ -60,6 +60,13 @@ interface EdzestervAjanlas {
     styleUrl: './app.css'
 })
 export class App implements OnInit {
+    aktivOldal = signal<'sportolok' | 'felhasznalok' | 'edzestervek' | 'edzesnaplo'>('sportolok');
+
+    oldalValtas(oldal: 'sportolok' | 'felhasznalok' | 'edzestervek' | 'edzesnaplo') {
+        this.aktivOldal.set(oldal);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     edzestervek = signal<Edzesterv[]>([]);
     edzesnaplo = signal<Edzesnaplo[]>([]);
     sportolok = signal<Sportolo[]>([]);
