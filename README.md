@@ -1,4 +1,3 @@
-
 # FitTrack
 
 A FitTrack egy edzéstervek, gyakorlatok és teljesített sorozatok nyilvántartására szolgáló webalkalmazás, amely mesterséges intelligencia segítségével személyre szabott edzésterv-ajánlásokat is képes készíteni.
@@ -66,30 +65,59 @@ A Felhasználók menüpontban létrehozott Sportoló és Edző szerepkörű szem
 
 ## Telepítés és indítás
 
+A projekt forráskódja GitHubról letölthető vagy klónozható. A működéshez a helyi adatbázist, a backend hitelesítési beállításait és az Ollama szolgáltatást is elő kell készíteni.
+
 ### Előfeltételek
 
-- Node.js és npm
-- Angular CLI
-- MySQL vagy MariaDB (például XAMPP)
-- Ollama
-- Letöltött qwen3:1.7b modell
+- Node.js és npm (az Angular 21-gyel kompatibilis verzió)
+- MySQL vagy MariaDB, például XAMPP
+- Ollama a `qwen3:1.7b` modellel (az AI-ajánlásokhoz)
+- Git (opcionális, ZIP-letöltés esetén nem szükséges)
 
-### 1. Adatbázis
+### 1. Projekt letöltése
 
-Indítsd el a MySQL szolgáltatást, majd hozd létre a FitTrack alkalmazáshoz szükséges `fittrack` adatbázist.
-
-A backend adatbázis-kapcsolatát a környezeti változókban kell beállítani.
-
-### 2. Backend indítása
-
-Lépj be a backend könyvtárába:
+A repository klónozása:
 
 ```bash
-cd backend
-npm install
+git clone https://github.com/KovacsAttilaMarcell/FitTrack.git
+cd FitTrack
 ```
 
-Állítsd be a backend által használt `.env` fájlt. A bejelentkezéshez szükséges környezeti változók például:
+Alternatív megoldásként a GitHubon a **Code → Download ZIP** lehetőséggel is letölthető a projekt.
+
+A letöltött ZIP nem tartalmazza a helyi `.env` fájlt, a telepített `node_modules` függőségeket vagy a MySQL adatbázis adatait.
+
+### 2. Adatbázis létrehozása
+
+1. Indítsd el a MySQL/MariaDB szolgáltatást (például XAMPP segítségével).
+2. Nyisd meg a phpMyAdmin felületét.
+3. Importáld a projekt főkönyvtárában található `database.sql` fájlt.
+4. Az SQL-fájl létrehozza a `fittrack` adatbázist és az alkalmazás alapvető tábláit.
+
+A jelenlegi `backend/src/database.ts` a következő helyi adatbázis-kapcsolatot használja:
+
+```text
+host: localhost
+port: 3306
+user: root
+password: (üres)
+database: fittrack
+```
+
+Amennyiben a MySQL-telepítés eltérő felhasználót, jelszót vagy portot használ, a `backend/src/database.ts` beállításait módosítani kell.
+
+### 3. Backend konfigurálása és indítása
+
+A `backend` mappában hozz létre egy `.env` fájlt a `.env.example` alapján.
+
+Windows parancssorban:
+
+```bat
+cd backend
+copy .env.example .env
+```
+
+A `.env` fájlban add meg a saját adminbejelentkezési adatokat:
 
 ```env
 ADMIN_USERNAME=admin
@@ -97,11 +125,26 @@ ADMIN_PASSWORD=egy_eros_sajat_jelszo
 AUTH_SECRET=egy_hosszu_veletlenszeru_titkos_kulcs
 ```
 
-Az adatbázis és az Ollama kapcsolódási beállításait is a backend konfigurációjának megfelelően kell megadni.
+Az `ADMIN_PASSWORD` és `AUTH_SECRET` értékét saját, erős értékre kell cserélni.
 
-A backendet a projekt `package.json` fájljában meghatározott fejlesztői paranccsal kell elindítani.
+Ezután telepítsd a függőségeket, és indítsd el a backendet:
 
-### 3. Frontend indítása
+```bash
+npm install
+npm run dev
+```
+
+A backend alapértelmezett címe:
+
+`http://localhost:3000`
+
+Az első indításkor létrejön az `auth_fiok` adatbázistábla és az adminfiók.
+
+**Fontos:** meglévő adminfiók esetén a `.env` fájlban megváltoztatott jelszó nem feltétlenül írja felül a korábban adatbázisban tárolt jelszót.
+
+### 4. Frontend indítása
+
+Nyiss egy második terminált a projekt főkönyvtárában:
 
 ```bash
 cd frontend
@@ -109,21 +152,64 @@ npm install
 npm start
 ```
 
-Ezután nyisd meg a terminálban megjelenő helyi Angular-címet.
+Az alkalmazás alapértelmezett címe:
 
-### 4. Ollama indítása
+`http://localhost:4200`
 
-A szükséges modell letöltése:
+A bejelentkezéshez a backend konfigurálásakor megadott adminfiók adatai szükségesek.
+
+### 5. Ollama és AI-ajánlások
+
+Telepítsd és indítsd el az Ollamát.
+
+A használt modell letöltése:
 
 ```bash
 ollama pull qwen3:1.7b
 ```
 
-Az Ollama szolgáltatásnak futnia kell az AI-ajánlások használatához.
+Az Ollama szolgáltatás alapértelmezett címe:
+
+`http://localhost:11434`
+
+Ha szükséges, a szolgáltatás elindítható az alábbi paranccsal:
+
+```bash
+ollama serve
+```
+
+A backend opcionálisan az alábbi környezeti változókat támogatja:
+
+```env
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=qwen3:1.7b
+```
+
+Az AI-alapú edzésterv-ajánlások működéséhez az Ollama szolgáltatásnak és a megfelelő modellnek elérhetőnek kell lennie.
+
+### 6. Gyors működésellenőrzés
+
+A telepítés után a következő lépésekkel ellenőrizhető az alkalmazás:
+
+1. Nyisd meg a FitTrack felületét.
+2. Jelentkezz be az adminfiókkal.
+3. Hozz létre egy sportolót céllal és felszereléssel.
+4. Kérj személyre szabott AI-edzésterv-ajánlást.
+5. Hozz létre egy edzéstervet, és adj hozzá gyakorlatot.
+6. Rögzíts egy teljesített sorozatot az Edzésnaplóban.
+7. Frissítsd az oldalt, és ellenőrizd a tárolt adatok megmaradását.
+
+### Gyakori indítási problémák
+
+- **Adatbázis-kapcsolati hiba:** ellenőrizd a MySQL szolgáltatást és a `backend/src/database.ts` beállításait.
+- **Hiányzó adminbeállítások:** ellenőrizd a `backend/.env` fájlt.
+- **Nem működik az AI-ajánlás:** ellenőrizd az Ollama szolgáltatást és a `qwen3:1.7b` modell meglétét.
+- **Hiányzó npm-csomagok:** futtasd az `npm install` parancsot a backend és frontend mappában.
+- **Foglalt port:** ellenőrizd, hogy más alkalmazás nem használja-e a szükséges portokat.
 
 ## Tesztelés
 
-A projekt funkcióinak ellenőrzésére manuális tesztesetek készültek.
+A projekt funkcióinak ellenőrzésére 47 manuális teszteset készült, amelyek sikeresen teljesültek.
 
 A tesztek többek között az alábbiakat vizsgálják:
 
