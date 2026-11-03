@@ -1,21 +1,38 @@
+
 import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
 import db from "./database.js";
+import {
+    randomBytes,
+    scryptSync,
+    timingSafeEqual,
+    createHmac
+} from "node:crypto";
+
 import { Ismetlesszam } from "./value-objects/Ismetlesszam.js";
 import { Terheles } from "./value-objects/Terheles.js";
 
 const app = express();
 const PORT = 3000;
 
-const ollamaUrl = process.env.OLLAMA_URL || "http://localhost:11434";
-const ollamaModel = process.env.OLLAMA_MODEL || "qwen3:1.7b";
+const ollamaUrl =
+    process.env.OLLAMA_URL || "http://localhost:11434";
+
+const ollamaModel =
+    process.env.OLLAMA_MODEL || "qwen3:1.7b";
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => { res.send("FitTrack backend is running!"); });
+app.get("/", (req, res) => {
+    res.send("FitTrack backend is running!");
+});
+
+// ==========================================
+// AI – támogatott célok és gyakorlatkatalógus
+// ==========================================
 
 const tamogatottCelok = [
     "erőnövelés",
@@ -36,7 +53,11 @@ const gyakorlatKatalogus = [
     {
         nev: "Evezés súlyzóval",
         felszereles: ["súlyzó"],
-        celok: ["erőnövelés", "izomtömeg növelése", "általános fittség"],
+        celok: [
+            "erőnövelés",
+            "izomtömeg növelése",
+            "általános fittség"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
@@ -60,7 +81,12 @@ const gyakorlatKatalogus = [
     {
         nev: "Goblet guggolás",
         felszereles: ["súlyzó"],
-        celok: ["erőnövelés", "izomtömeg növelése", "fogyás", "általános fittség"],
+        celok: [
+            "erőnövelés",
+            "izomtömeg növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
@@ -72,73 +98,124 @@ const gyakorlatKatalogus = [
     {
         nev: "Kitörés súlyzóval",
         felszereles: ["súlyzó"],
-        celok: ["erőnövelés", "izomtömeg növelése", "fogyás", "általános fittség"],
+        celok: [
+            "erőnövelés",
+            "izomtömeg növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Fekvőtámasz",
         felszereles: [],
-        celok: ["erőnövelés", "izomtömeg növelése", "fogyás", "általános fittség"],
+        celok: [
+            "erőnövelés",
+            "izomtömeg növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Saját testsúlyos guggolás",
         felszereles: [],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség", "mobilitás javítása"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség",
+            "mobilitás javítása"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Kitörés saját testsúllyal",
         felszereles: [],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség", "mobilitás javítása"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség",
+            "mobilitás javítása"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Plank",
         felszereles: [],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "másodperc"
     },
     {
         nev: "Hegymászó gyakorlat",
         felszereles: [],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Jumping jack",
         felszereles: [],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Futás futópadon",
         felszereles: ["futópad"],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "perc"
     },
     {
         nev: "Tempós séta futópadon",
         felszereles: ["futópad"],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség"
+        ],
         mertekegyseg: "perc"
     },
     {
         nev: "Magas térdemelés",
         felszereles: [],
-        celok: ["állóképesség növelése", "fogyás", "általános fittség", "mobilitás javítása"],
+        celok: [
+            "állóképesség növelése",
+            "fogyás",
+            "általános fittség",
+            "mobilitás javítása"
+        ],
         mertekegyseg: "másodperc"
     },
     {
         nev: "Csípőemelés",
         felszereles: [],
-        celok: ["általános fittség", "mobilitás javítása"],
+        celok: [
+            "általános fittség",
+            "mobilitás javítása"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
         nev: "Madár-kutya gyakorlat",
         felszereles: [],
-        celok: ["általános fittség", "mobilitás javítása"],
+        celok: [
+            "általános fittség",
+            "mobilitás javítása"
+        ],
         mertekegyseg: "ismétlés"
     },
     {
@@ -165,70 +242,166 @@ function normalizalSzoveg(szoveg: string): string {
     return szoveg.toLowerCase().trim();
 }
 
-function sportoloFelszerelesei(felszereles: string): string[] {
-    return felszereles.toLowerCase().split(",").map((elem: string) => elem.trim()).filter((elem: string) => elem !== "");
+function sportoloFelszerelesei(
+    felszereles: string
+): string[] {
+    return felszereles
+        .toLowerCase()
+        .split(",")
+        .map(elem => elem.trim())
+        .filter(elem => elem !== "");
 }
 
-function megfeleloGyakorlatok(cel: string, felszereles: string) {
+function megfeleloGyakorlatok(
+    cel: string,
+    felszereles: string
+) {
     const normalizaltCel = normalizalSzoveg(cel);
-    const elerhetoFelszerelesek = sportoloFelszerelesei(felszereles);
+
+    const elerhetoFelszerelesek =
+        sportoloFelszerelesei(felszereles);
 
     return gyakorlatKatalogus.filter(gyakorlat => {
-        const celMegfelel = gyakorlat.celok.includes(normalizaltCel);
-        const felszerelesMegfelel = gyakorlat.felszereles.every((szuksegesFelszereles: string) => elerhetoFelszerelesek.includes(szuksegesFelszereles));
+        const celMegfelel =
+            gyakorlat.celok.includes(normalizaltCel);
+
+        const felszerelesMegfelel =
+            gyakorlat.felszereles.every(
+                szuksegesFelszereles =>
+                    elerhetoFelszerelesek.includes(
+                        szuksegesFelszereles
+                    )
+            );
 
         return celMegfelel && felszerelesMegfelel;
     });
 }
 
-function mennyisegErvenyes(mertekegyseg: string, sorozatok: number, mennyiseg: number): boolean {
-    if (!Number.isInteger(sorozatok) || !Number.isInteger(mennyiseg)) { return false; }
+function mennyisegErvenyes(
+    mertekegyseg: string,
+    sorozatok: number,
+    mennyiseg: number
+): boolean {
+    if (
+        !Number.isInteger(sorozatok) ||
+        !Number.isInteger(mennyiseg)
+    ) {
+        return false;
+    }
 
     if (mertekegyseg === "másodperc") {
-        return sorozatok >= 2 && sorozatok <= 5 && mennyiseg >= 10 && mennyiseg <= 60;
+        return sorozatok >= 2 &&
+            sorozatok <= 5 &&
+            mennyiseg >= 10 &&
+            mennyiseg <= 60;
     }
 
     if (mertekegyseg === "perc") {
-        return sorozatok >= 1 && sorozatok <= 5 && mennyiseg >= 5 && mennyiseg <= 60;
+        return sorozatok >= 1 &&
+            sorozatok <= 5 &&
+            mennyiseg >= 5 &&
+            mennyiseg <= 60;
     }
 
-    return sorozatok >= 2 && sorozatok <= 5 && mennyiseg >= 3 && mennyiseg <= 30;
+    return sorozatok >= 2 &&
+        sorozatok <= 5 &&
+        mennyiseg >= 3 &&
+        mennyiseg <= 30;
 }
 
-function ajanlasErvenyes(ajanlas: any, sportoloCel: string, sportoloFelszereles: string): boolean {
-    if (!ajanlas || typeof ajanlas !== "object") { return false; }
-    if (typeof ajanlas.tervNev !== "string" || !ajanlas.tervNev.trim()) { return false; }
-    if (!Array.isArray(ajanlas.gyakorlatok) || ajanlas.gyakorlatok.length !== 2) { return false; }
+function ajanlasErvenyes(
+    ajanlas: any,
+    sportoloCel: string,
+    sportoloFelszereles: string
+): boolean {
+    if (!ajanlas || typeof ajanlas !== "object") {
+        return false;
+    }
 
-    const engedelyezettGyakorlatok = megfeleloGyakorlatok(sportoloCel, sportoloFelszereles);
+    if (
+        typeof ajanlas.tervNev !== "string" ||
+        !ajanlas.tervNev.trim()
+    ) {
+        return false;
+    }
 
-    const gyakorlatNevek = ajanlas.gyakorlatok.map((gyakorlat: any) =>
-        typeof gyakorlat?.nev === "string" ? gyakorlat.nev.toLowerCase().trim() : ""
-    );
+    if (
+        !Array.isArray(ajanlas.gyakorlatok) ||
+        ajanlas.gyakorlatok.length !== 2
+    ) {
+        return false;
+    }
 
-    if (new Set(gyakorlatNevek).size !== gyakorlatNevek.length) { return false; }
-
-    const gyakorlatokErvenyesek = ajanlas.gyakorlatok.every((gyakorlat: any) => {
-        if (!gyakorlat || typeof gyakorlat !== "object") { return false; }
-        if (typeof gyakorlat.nev !== "string" || !gyakorlat.nev.trim()) { return false; }
-
-        const katalogusGyakorlat = engedelyezettGyakorlatok.find(elem => elem.nev.toLowerCase() === gyakorlat.nev.toLowerCase().trim());
-
-        if (!katalogusGyakorlat) { return false; }
-
-        return mennyisegErvenyes(katalogusGyakorlat.mertekegyseg, gyakorlat.sorozatok, gyakorlat.ismetles);
-    });
-
-    if (!gyakorlatokErvenyesek) { return false; }
-
-    const felszerelesesGyakorlatok = engedelyezettGyakorlatok.filter(gyakorlat => gyakorlat.felszereles.length > 0);
-
-    if (felszerelesesGyakorlatok.length > 0) {
-        const hasznalFelszerelest = ajanlas.gyakorlatok.some((gyakorlat: any) =>
-            felszerelesesGyakorlatok.some(katalogusGyakorlat => katalogusGyakorlat.nev.toLowerCase() === gyakorlat.nev.toLowerCase().trim())
+    const engedelyezettGyakorlatok =
+        megfeleloGyakorlatok(
+            sportoloCel,
+            sportoloFelszereles
         );
 
-        if (!hasznalFelszerelest) { return false; }
+    const gyakorlatNevek =
+        ajanlas.gyakorlatok.map((gyakorlat: any) =>
+            typeof gyakorlat?.nev === "string"
+                ? gyakorlat.nev.toLowerCase().trim()
+                : ""
+        );
+
+    if (
+        new Set(gyakorlatNevek).size !==
+        gyakorlatNevek.length
+    ) {
+        return false;
+    }
+
+    const gyakorlatokErvenyesek =
+        ajanlas.gyakorlatok.every((gyakorlat: any) => {
+            if (
+                !gyakorlat ||
+                typeof gyakorlat !== "object" ||
+                typeof gyakorlat.nev !== "string"
+            ) {
+                return false;
+            }
+
+            const katalogusGyakorlat =
+                engedelyezettGyakorlatok.find(
+                    elem =>
+                        elem.nev.toLowerCase() ===
+                        gyakorlat.nev.toLowerCase().trim()
+                );
+
+            if (!katalogusGyakorlat) {
+                return false;
+            }
+
+            return mennyisegErvenyes(
+                katalogusGyakorlat.mertekegyseg,
+                gyakorlat.sorozatok,
+                gyakorlat.ismetles
+            );
+        });
+
+    if (!gyakorlatokErvenyesek) {
+        return false;
+    }
+
+    const felszerelesesGyakorlatok =
+        engedelyezettGyakorlatok.filter(
+            gyakorlat => gyakorlat.felszereles.length > 0
+        );
+
+    if (felszerelesesGyakorlatok.length > 0) {
+        const hasznalFelszerelest =
+            ajanlas.gyakorlatok.some((gyakorlat: any) =>
+                felszerelesesGyakorlatok.some(
+                    katalogusGyakorlat =>
+                        katalogusGyakorlat.nev.toLowerCase() ===
+                        gyakorlat.nev.toLowerCase().trim()
+                )
+            );
+
+        if (!hasznalFelszerelest) {
+            return false;
+        }
     }
 
     return true;
@@ -237,39 +410,313 @@ function ajanlasErvenyes(ajanlas: any, sportoloCel: string, sportoloFelszereles:
 function katalogusAdatokHozzaadasa(ajanlas: any) {
     return {
         ...ajanlas,
-        gyakorlatok: ajanlas.gyakorlatok.map((gyakorlat: any) => {
-            const katalogusGyakorlat = gyakorlatKatalogus.find(elem => elem.nev.toLowerCase() === gyakorlat.nev.toLowerCase().trim());
+        gyakorlatok: ajanlas.gyakorlatok.map(
+            (gyakorlat: any) => {
+                const katalogusGyakorlat =
+                    gyakorlatKatalogus.find(
+                        elem =>
+                            elem.nev.toLowerCase() ===
+                            gyakorlat.nev.toLowerCase().trim()
+                    );
 
-            return {
-                ...gyakorlat,
-                mertekegyseg: katalogusGyakorlat?.mertekegyseg || "ismétlés",
-                felszereles: katalogusGyakorlat && katalogusGyakorlat.felszereles.length > 0 ? katalogusGyakorlat.felszereles.join(", ") : ""
-            };
-        })
+                return {
+                    ...gyakorlat,
+                    mertekegyseg:
+                        katalogusGyakorlat?.mertekegyseg ||
+                        "ismétlés",
+                    felszereles:
+                        katalogusGyakorlat &&
+                        katalogusGyakorlat.felszereles.length > 0
+                            ? katalogusGyakorlat.felszereles.join(", ")
+                            : ""
+                };
+            }
+        )
     };
 }
 
-// Összes edzésterv lekérése
-app.get("/api/edzestervek", async (req, res) => {
+// ==========================================
+// HITelesítés
+// ==========================================
+
+const authSecret = process.env.AUTH_SECRET;
+const adminUser = process.env.ADMIN_USERNAME;
+const adminPassword = process.env.ADMIN_PASSWORD;
+
+if (!authSecret || authSecret.length < 32) {
+    throw new Error(
+        "AUTH_SECRET legalább 32 karakter legyen."
+    );
+}
+
+const secret: string = authSecret;
+const tokenLifeSeconds = 8 * 60 * 60;
+
+function passwordHash(
+    password: string,
+    salt: string
+): string {
+    return scryptSync(password, salt, 64).toString("hex");
+}
+
+function verifyPassword(
+    password: string,
+    stored: string
+): boolean {
+    const [salt, hash] = stored.split(":");
+
+    if (
+        !salt ||
+        !hash ||
+        !/^[a-f0-9]{128}$/.test(hash)
+    ) {
+        return false;
+    }
+
+    const expected = Buffer.from(hash, "hex");
+
+    return timingSafeEqual(
+        Buffer.from(passwordHash(password, salt), "hex"),
+        expected
+    );
+}
+
+function signToken(
+    userId: number,
+    username: string
+): string {
+    const payload = Buffer.from(
+        JSON.stringify({
+            sub: userId,
+            username,
+            exp:
+                Math.floor(Date.now() / 1000) +
+                tokenLifeSeconds
+        })
+    ).toString("base64url");
+
+    const signature = createHmac("sha256", secret)
+        .update(payload)
+        .digest("base64url");
+
+    return `${payload}.${signature}`;
+}
+
+function readToken(token: string): {
+    sub: number;
+    username: string;
+    exp: number;
+} | null {
+    const parts = token.split(".");
+
+    if (parts.length !== 2) {
+        return null;
+    }
+
+    const [payload, signature] = parts;
+
+    const expected = createHmac("sha256", secret)
+        .update(payload)
+        .digest();
+
+    let provided: Buffer;
+
     try {
-        const [rows] = await db.query("SELECT * FROM edzesterv ORDER BY id DESC");
-        res.json(rows);
+        provided = Buffer.from(
+            signature,
+            "base64url"
+        );
+    } catch {
+        return null;
+    }
+
+    if (
+        provided.length !== expected.length ||
+        !timingSafeEqual(provided, expected)
+    ) {
+        return null;
+    }
+
+    try {
+        const data = JSON.parse(
+            Buffer.from(payload, "base64url")
+                .toString("utf8")
+        );
+
+        if (
+            Number.isInteger(data.sub) &&
+            typeof data.username === "string" &&
+            Number.isFinite(data.exp) &&
+            data.exp > Date.now() / 1000
+        ) {
+            return data;
+        }
+
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+// Bejelentkezés
+app.post("/api/auth/login", async (req, res) => {
+    const { username, password } = req.body ?? {};
+
+    if (
+        typeof username !== "string" ||
+        typeof password !== "string" ||
+        username.length > 100 ||
+        password.length > 1024
+    ) {
+        return res.status(400).json({
+            message: "Érvénytelen bejelentkezési adatok."
+        });
+    }
+
+    try {
+        const [rows]: any = await db.query(
+            `SELECT id, username, password_hash
+             FROM auth_fiok
+             WHERE username = ?
+             LIMIT 1`,
+            [username.trim()]
+        );
+
+        if (
+            rows.length !== 1 ||
+            !verifyPassword(
+                password,
+                rows[0].password_hash
+            )
+        ) {
+            return res.status(401).json({
+                message: "Hibás felhasználónév vagy jelszó."
+            });
+        }
+
+        return res.json({
+            token: signToken(
+                rows[0].id,
+                rows[0].username
+            ),
+            username: rows[0].username
+        });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt az edzéstervek lekérésekor." });
+
+        return res.status(500).json({
+            message: "Bejelentkezési hiba."
+        });
     }
 });
 
-// Új edzésterv létrehozása
+// Minden további /api végpont védelme
+app.use("/api", (req, res, next) => {
+    const authorization =
+        req.headers.authorization || "";
+
+    const token = authorization.startsWith("Bearer ")
+        ? authorization.slice(7)
+        : "";
+
+    const user = token ? readToken(token) : null;
+
+    if (!user) {
+        return res.status(401).json({
+            message:
+                "Bejelentkezés szükséges vagy lejárt a munkamenet."
+        });
+    }
+
+    res.locals.authUser = user;
+    next();
+});
+
+app.get("/api/auth/me", (req, res) => {
+    res.json({
+        username: res.locals.authUser.username
+    });
+});
+
+// Első adminfiók létrehozása
+async function initializeAuth() {
+    await db.query(`
+        CREATE TABLE IF NOT EXISTS auth_fiok (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(100) NOT NULL UNIQUE,
+            password_hash VARCHAR(200) NOT NULL
+        )
+    `);
+
+    const [rows]: any = await db.query(
+        "SELECT COUNT(*) AS total FROM auth_fiok"
+    );
+
+    if (rows[0].total === 0) {
+        if (
+            !adminUser ||
+            !adminPassword ||
+            adminPassword.length < 12
+        ) {
+            throw new Error(
+                "Első indításhoz ADMIN_USERNAME és legalább 12 karakteres ADMIN_PASSWORD szükséges."
+            );
+        }
+
+        const salt =
+            randomBytes(16).toString("hex");
+
+        await db.query(
+            `INSERT INTO auth_fiok
+             (username, password_hash)
+             VALUES (?, ?)`,
+            [
+                adminUser,
+                `${salt}:${passwordHash(adminPassword, salt)}`
+            ]
+        );
+
+        console.log(
+            "Kezdeti FitTrack bejelentkezési fiók létrehozva."
+        );
+    }
+}
+
+// ==========================================
+// EDZÉSTERVEK
+// ==========================================
+
+app.get("/api/edzestervek", async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            "SELECT * FROM edzesterv ORDER BY id DESC"
+        );
+
+        res.json(rows);
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message:
+                "Hiba történt az edzéstervek lekérésekor."
+        });
+    }
+});
+
 app.post("/api/edzestervek", async (req, res) => {
     try {
         const { nev } = req.body;
 
         if (!nev || nev.trim() === "") {
-            return res.status(400).json({ message: "Az edzésterv neve kötelező." });
+            return res.status(400).json({
+                message: "Az edzésterv neve kötelező."
+            });
         }
 
-        const [result]: any = await db.query("INSERT INTO edzesterv (nev) VALUES (?)", [nev.trim()]);
+        const [result]: any = await db.query(
+            "INSERT INTO edzesterv (nev) VALUES (?)",
+            [nev.trim()]
+        );
 
         res.status(201).json({
             id: result.insertId,
@@ -277,30 +724,49 @@ app.post("/api/edzestervek", async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt az edzésterv létrehozásakor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt az edzésterv létrehozásakor."
+        });
     }
 });
 
-// Gyakorlat hozzáadása egy edzéstervhez
 app.post("/api/gyakorlatok", async (req, res) => {
     try {
         const { nev, edzesterv_id } = req.body;
 
         if (!nev || nev.trim() === "") {
-            return res.status(400).json({ message: "A gyakorlat neve kötelező." });
+            return res.status(400).json({
+                message: "A gyakorlat neve kötelező."
+            });
         }
 
         if (!edzesterv_id) {
-            return res.status(400).json({ message: "Az edzésterv azonosítója kötelező." });
+            return res.status(400).json({
+                message:
+                    "Az edzésterv azonosítója kötelező."
+            });
         }
 
-        const [tervek]: any = await db.query("SELECT id FROM edzesterv WHERE id = ?", [edzesterv_id]);
+        const [tervek]: any = await db.query(
+            "SELECT id FROM edzesterv WHERE id = ?",
+            [edzesterv_id]
+        );
 
         if (tervek.length === 0) {
-            return res.status(404).json({ message: "A megadott edzésterv nem található." });
+            return res.status(404).json({
+                message:
+                    "A megadott edzésterv nem található."
+            });
         }
 
-        const [result]: any = await db.query("INSERT INTO gyakorlat (nev, edzesterv_id) VALUES (?, ?)", [nev.trim(), edzesterv_id]);
+        const [result]: any = await db.query(
+            `INSERT INTO gyakorlat
+             (nev, edzesterv_id)
+             VALUES (?, ?)`,
+            [nev.trim(), edzesterv_id]
+        );
 
         res.status(201).json({
             id: result.insertId,
@@ -309,113 +775,198 @@ app.post("/api/gyakorlatok", async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt a gyakorlat hozzáadásakor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt a gyakorlat hozzáadásakor."
+        });
     }
 });
 
-// Egy edzésterv gyakorlatainak lekérése
-app.get("/api/edzestervek/:id/gyakorlatok", async (req, res) => {
-    try {
-        const edzestervId = req.params.id;
-        const [rows] = await db.query("SELECT * FROM gyakorlat WHERE edzesterv_id = ? ORDER BY id", [edzestervId]);
-        res.json(rows);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Hiba történt a gyakorlatok lekérésekor." });
-    }
-});
+app.get(
+    "/api/edzestervek/:id/gyakorlatok",
+    async (req, res) => {
+        try {
+            const edzestervId = req.params.id;
 
-// Teljesített sorozat rögzítése
+            const [rows] = await db.query(
+                `SELECT *
+                 FROM gyakorlat
+                 WHERE edzesterv_id = ?
+                 ORDER BY id`,
+                [edzestervId]
+            );
+
+            res.json(rows);
+        } catch (error) {
+            console.error(error);
+
+            res.status(500).json({
+                message:
+                    "Hiba történt a gyakorlatok lekérésekor."
+            });
+        }
+    }
+);
+
+// ==========================================
+// EDZÉSNAPLÓ
+// ==========================================
+
 app.post("/api/edzesnaplo", async (req, res) => {
     try {
-        const { gyakorlat_id, ismetlesszam, terheles } = req.body;
+        const {
+            gyakorlat_id,
+            ismetlesszam,
+            terheles
+        } = req.body;
 
         if (!gyakorlat_id) {
-            return res.status(400).json({ message: "A gyakorlat azonosítója kötelező." });
+            return res.status(400).json({
+                message:
+                    "A gyakorlat azonosítója kötelező."
+            });
         }
 
         let ismetlesszamVO: Ismetlesszam;
         let terhelesVO: Terheles;
 
         try {
-            ismetlesszamVO = new Ismetlesszam(ismetlesszam);
-            terhelesVO = new Terheles(terheles);
+            ismetlesszamVO =
+                new Ismetlesszam(ismetlesszam);
+
+            terhelesVO =
+                new Terheles(terheles);
         } catch (error) {
-            return res.status(400).json({ message: error instanceof Error ? error.message : "Érvénytelen adat." });
+            return res.status(400).json({
+                message:
+                    error instanceof Error
+                        ? error.message
+                        : "Érvénytelen adat."
+            });
         }
 
-        const [gyakorlatok]: any = await db.query("SELECT id FROM gyakorlat WHERE id = ?", [gyakorlat_id]);
+        const [gyakorlatok]: any = await db.query(
+            "SELECT id FROM gyakorlat WHERE id = ?",
+            [gyakorlat_id]
+        );
 
         if (gyakorlatok.length === 0) {
-            return res.status(404).json({ message: "A megadott gyakorlat nem található." });
+            return res.status(404).json({
+                message:
+                    "A megadott gyakorlat nem található."
+            });
         }
 
         const [result]: any = await db.query(
-            "INSERT INTO edzesnaplo (gyakorlat_id, ismetlesszam, terheles) VALUES (?, ?, ?)",
-            [gyakorlat_id, ismetlesszamVO.getErtek(), terhelesVO.getErtek()]
+            `INSERT INTO edzesnaplo
+             (gyakorlat_id, ismetlesszam, terheles)
+             VALUES (?, ?, ?)`,
+            [
+                gyakorlat_id,
+                ismetlesszamVO.getErtek(),
+                terhelesVO.getErtek()
+            ]
         );
 
         res.status(201).json({
             id: result.insertId,
             gyakorlat_id,
-            ismetlesszam: ismetlesszamVO.getErtek(),
-            terheles: terhelesVO.getErtek()
+            ismetlesszam:
+                ismetlesszamVO.getErtek(),
+            terheles:
+                terhelesVO.getErtek()
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt az edzés rögzítésekor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt az edzés rögzítésekor."
+        });
     }
 });
 
-// Edzésnapló lekérése
 app.get("/api/edzesnaplo", async (req, res) => {
     try {
         const [rows] = await db.query(`
-            SELECT edzesnaplo.id,
-                   edzesnaplo.ismetlesszam,
-                   edzesnaplo.terheles,
-                   edzesnaplo.datum,
-                   gyakorlat.nev AS gyakorlat_nev,
-                   edzesterv.nev AS edzesterv_nev
+            SELECT
+                edzesnaplo.id,
+                edzesnaplo.ismetlesszam,
+                edzesnaplo.terheles,
+                edzesnaplo.datum,
+                gyakorlat.nev AS gyakorlat_nev,
+                edzesterv.nev AS edzesterv_nev
             FROM edzesnaplo
-            JOIN gyakorlat ON edzesnaplo.gyakorlat_id = gyakorlat.id
-            JOIN edzesterv ON gyakorlat.edzesterv_id = edzesterv.id
+            JOIN gyakorlat
+                ON edzesnaplo.gyakorlat_id = gyakorlat.id
+            JOIN edzesterv
+                ON gyakorlat.edzesterv_id = edzesterv.id
             ORDER BY edzesnaplo.datum DESC
         `);
 
         res.json(rows);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt az edzésnapló lekérésekor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt az edzésnapló lekérésekor."
+        });
     }
 });
 
-// Sportolók lekérése
+// ==========================================
+// SPORTOLÓK
+// ==========================================
+
 app.get("/api/sportolok", async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT * FROM sportolo ORDER BY id DESC");
+        const [rows] = await db.query(
+            "SELECT * FROM sportolo ORDER BY id DESC"
+        );
+
         res.json(rows);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt a sportolók lekérésekor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt a sportolók lekérésekor."
+        });
     }
 });
 
-// Új sportoló létrehozása
 app.post("/api/sportolok", async (req, res) => {
     try {
         const { nev, cel, felszereles } = req.body;
 
         if (!nev || nev.trim() === "") {
-            return res.status(400).json({ message: "A sportoló neve kötelező." });
+            return res.status(400).json({
+                message: "A sportoló neve kötelező."
+            });
         }
 
-        const tisztitottCel = typeof cel === "string" && cel.trim() !== "" ? cel.trim() : null;
-        const tisztitottFelszereles = typeof felszereles === "string" && felszereles.trim() !== "" ? felszereles.trim() : null;
+        const tisztitottCel =
+            typeof cel === "string" && cel.trim() !== ""
+                ? cel.trim()
+                : null;
+
+        const tisztitottFelszereles =
+            typeof felszereles === "string" &&
+            felszereles.trim() !== ""
+                ? felszereles.trim()
+                : null;
 
         const [result]: any = await db.query(
-            "INSERT INTO sportolo (nev, cel, felszereles) VALUES (?, ?, ?)",
-            [nev.trim(), tisztitottCel, tisztitottFelszereles]
+            `INSERT INTO sportolo
+             (nev, cel, felszereles)
+             VALUES (?, ?, ?)`,
+            [
+                nev.trim(),
+                tisztitottCel,
+                tisztitottFelszereles
+            ]
         );
 
         res.status(201).json({
@@ -426,35 +977,66 @@ app.post("/api/sportolok", async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt a sportoló létrehozásakor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt a sportoló létrehozásakor."
+        });
     }
 });
 
-// Felhasználók lekérése
+// ==========================================
+// FELHASZNÁLÓK
+// ==========================================
+
 app.get("/api/felhasznalok", async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT * FROM felhasznalo ORDER BY id DESC");
+        const [rows] = await db.query(
+            "SELECT * FROM felhasznalo ORDER BY id DESC"
+        );
+
         res.json(rows);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt a felhasználók lekérésekor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt a felhasználók lekérésekor."
+        });
     }
 });
 
-// Új felhasználó létrehozása
 app.post("/api/felhasznalok", async (req, res) => {
     try {
         const { nev, szerepkor } = req.body;
 
-        if (!nev || typeof nev !== "string" || nev.trim() === "") {
-            return res.status(400).json({ message: "A felhasználó neve kötelező." });
+        if (
+            !nev ||
+            typeof nev !== "string" ||
+            nev.trim() === ""
+        ) {
+            return res.status(400).json({
+                message:
+                    "A felhasználó neve kötelező."
+            });
         }
 
-        if (szerepkor !== "sportolo" && szerepkor !== "edzo") {
-            return res.status(400).json({ message: "A szerepkör csak sportolo vagy edzo lehet." });
+        if (
+            szerepkor !== "sportolo" &&
+            szerepkor !== "edzo"
+        ) {
+            return res.status(400).json({
+                message:
+                    "A szerepkör csak sportolo vagy edzo lehet."
+            });
         }
 
-        const [result]: any = await db.query("INSERT INTO felhasznalo (nev, szerepkor) VALUES (?, ?)", [nev.trim(), szerepkor]);
+        const [result]: any = await db.query(
+            `INSERT INTO felhasznalo
+             (nev, szerepkor)
+             VALUES (?, ?)`,
+            [nev.trim(), szerepkor]
+        );
 
         res.status(201).json({
             id: result.insertId,
@@ -463,74 +1045,154 @@ app.post("/api/felhasznalok", async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Hiba történt a felhasználó létrehozásakor." });
+
+        res.status(500).json({
+            message:
+                "Hiba történt a felhasználó létrehozásakor."
+        });
     }
 });
 
-// LLM-alapú edzésterv-ajánlás
-app.post("/api/sportolok/:id/ajanlas", async (req, res) => {
-    try {
-        const sportoloId = Number(req.params.id);
+// ==========================================
+// OLLAMA – EDZÉSTERV-AJÁNLÁS
+// ==========================================
 
-        if (!Number.isInteger(sportoloId) || sportoloId <= 0) {
-            return res.status(400).json({ message: "Érvénytelen sportoló azonosító." });
-        }
+app.post(
+    "/api/sportolok/:id/ajanlas",
+    async (req, res) => {
+        try {
+            const sportoloId =
+                Number(req.params.id);
 
-        const [rows]: any = await db.query("SELECT id, nev, cel, felszereles FROM sportolo WHERE id = ?", [sportoloId]);
+            if (
+                !Number.isInteger(sportoloId) ||
+                sportoloId <= 0
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Érvénytelen sportoló azonosító."
+                });
+            }
 
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "A sportoló nem található." });
-        }
+            const [rows]: any = await db.query(
+                `SELECT id, nev, cel, felszereles
+                 FROM sportolo
+                 WHERE id = ?`,
+                [sportoloId]
+            );
 
-        const sportolo = rows[0];
+            if (rows.length === 0) {
+                return res.status(404).json({
+                    message:
+                        "A sportoló nem található."
+                });
+            }
 
-        if (!sportolo.cel || !sportolo.cel.trim()) {
-            return res.status(400).json({ message: "Edzésterv-ajánláshoz meg kell adni a sportoló célját." });
-        }
+            const sportolo = rows[0];
 
-        if (!sportolo.felszereles || !sportolo.felszereles.trim()) {
-            return res.status(400).json({ message: "Edzésterv-ajánláshoz meg kell adni a rendelkezésre álló felszerelést." });
-        }
+            if (
+                !sportolo.cel ||
+                !sportolo.cel.trim()
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Edzésterv-ajánláshoz meg kell adni a sportoló célját."
+                });
+            }
 
-        const normalizaltCel = normalizalSzoveg(sportolo.cel);
+            if (
+                !sportolo.felszereles ||
+                !sportolo.felszereles.trim()
+            ) {
+                return res.status(400).json({
+                    message:
+                        "Edzésterv-ajánláshoz meg kell adni a rendelkezésre álló felszerelést."
+                });
+            }
 
-        if (!tamogatottCelok.includes(normalizaltCel)) {
-            return res.status(400).json({ message: `Nem támogatott cél. Választható célok: ${tamogatottCelok.join(", ")}.` });
-        }
+            const normalizaltCel =
+                normalizalSzoveg(sportolo.cel);
 
-        const valaszthatoGyakorlatok = megfeleloGyakorlatok(sportolo.cel, sportolo.felszereles);
+            if (
+                !tamogatottCelok.includes(
+                    normalizaltCel
+                )
+            ) {
+                return res.status(400).json({
+                    message:
+                        `Nem támogatott cél. Választható célok: ${tamogatottCelok.join(", ")}.`
+                });
+            }
 
-        if (valaszthatoGyakorlatok.length < 2) {
-            return res.status(422).json({ message: "A megadott célhoz és felszereléshez nincs legalább két megfelelő gyakorlat." });
-        }
+            const valaszthatoGyakorlatok =
+                megfeleloGyakorlatok(
+                    sportolo.cel,
+                    sportolo.felszereles
+                );
 
-        let veglegesAjanlas: any = null;
+            if (
+                valaszthatoGyakorlatok.length < 2
+            ) {
+                return res.status(422).json({
+                    message:
+                        "A megadott célhoz és felszereléshez nincs legalább két megfelelő gyakorlat."
+                });
+            }
 
-        for (let probalkozas = 1; probalkozas <= 3; probalkozas++) {
-            const kevertGyakorlatok = [...valaszthatoGyakorlatok].sort(() => Math.random() - 0.5);
+            let veglegesAjanlas: any = null;
 
-            const katalogusSzoveg = kevertGyakorlatok
-                .map(gyakorlat => `- ${gyakorlat.nev} 
-                    | mértékegység: ${gyakorlat.mertekegyseg} 
-                    | felszerelés: ${gyakorlat.felszereles.length > 0 
-                        ? gyakorlat.felszereles.join(", ") 
-                        : "nem szükséges"}`)
-                .join("\n");
+            for (
+                let probalkozas = 1;
+                probalkozas <= 3;
+                probalkozas++
+            ) {
+                const kevertGyakorlatok = [
+                    ...valaszthatoGyakorlatok
+                ].sort(() => Math.random() - 0.5);
 
-            const felszerelesesGyakorlatok = kevertGyakorlatok.filter(gyakorlat => gyakorlat.felszereles.length > 0);
+                const katalogusSzoveg =
+                    kevertGyakorlatok
+                        .map(gyakorlat =>
+                            `- ${gyakorlat.nev}
+| mértékegység: ${gyakorlat.mertekegyseg}
+| felszerelés: ${
+    gyakorlat.felszereles.length > 0
+        ? gyakorlat.felszereles.join(", ")
+        : "nem szükséges"
+}`
+                        )
+                        .join("\n");
 
-            const felszerelesesGyakorlatokSzoveg = felszerelesesGyakorlatok.length > 0
-                ? felszerelesesGyakorlatok.map(gyakorlat => `- ${gyakorlat.nev}`).join("\n")
-                : "Nincs kötelező felszereléses gyakorlat.";
+                const felszerelesesGyakorlatok =
+                    kevertGyakorlatok.filter(
+                        gyakorlat =>
+                            gyakorlat.felszereles.length > 0
+                    );
 
-            console.log(`LLM ajánlási próbálkozás: ${probalkozas}/3`);
+                const felszerelesesGyakorlatokSzoveg =
+                    felszerelesesGyakorlatok.length > 0
+                        ? felszerelesesGyakorlatok
+                            .map(gyakorlat =>
+                                `- ${gyakorlat.nev}`
+                            )
+                            .join("\n")
+                        : "Nincs kötelező felszereléses gyakorlat.";
 
-            const ollamaResponse = await fetch(`${ollamaUrl}/api/generate`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    model: ollamaModel,
-                    prompt: `
+                console.log(
+                    `LLM ajánlási próbálkozás: ${probalkozas}/3`
+                );
+
+                const ollamaResponse = await fetch(
+                    `${ollamaUrl}/api/generate`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            model: ollamaModel,
+                            prompt: `
 Készíts rövid, személyre szabott edzéstervet.
 
 Sportoló célja: ${sportolo.cel}
@@ -561,105 +1223,178 @@ Kötelező szabályok:
 - Konkrét kilogramm-terhelést ne adj meg.
 - Ne adj hozzá magyarázó szöveget.
 `,
-                    stream: false,
-                    think: false,
-                    format: {
-                        type: "object",
-                        properties: {
-                            tervNev: { type: "string" },
-                            gyakorlatok: {
-                                type: "array",
-                                minItems: 2,
-                                maxItems: 2,
-                                items: {
-                                    type: "object",
-                                    properties: {
-                                        nev: { type: "string" },
-                                        sorozatok: {
-                                            type: "integer",
-                                            minimum: 2,
-                                            maximum: 5
-                                        },
-                                        ismetles: {
-                                            type: "integer",
-                                            minimum: 1,
-                                            maximum: 60
-                                        }
+                            stream: false,
+                            think: false,
+                            format: {
+                                type: "object",
+                                properties: {
+                                    tervNev: {
+                                        type: "string"
                                     },
-                                    required: ["nev", "sorozatok", "ismetles"]
-                                }
+                                    gyakorlatok: {
+                                        type: "array",
+                                        minItems: 2,
+                                        maxItems: 2,
+                                        items: {
+                                            type: "object",
+                                            properties: {
+                                                nev: {
+                                                    type: "string"
+                                                },
+                                                sorozatok: {
+                                                    type: "integer",
+                                                    minimum: 2,
+                                                    maximum: 5
+                                                },
+                                                ismetles: {
+                                                    type: "integer",
+                                                    minimum: 1,
+                                                    maximum: 60
+                                                }
+                                            },
+                                            required: [
+                                                "nev",
+                                                "sorozatok",
+                                                "ismetles"
+                                            ]
+                                        }
+                                    }
+                                },
+                                required: [
+                                    "tervNev",
+                                    "gyakorlatok"
+                                ]
+                            },
+                            options: {
+                                temperature: 0.3,
+                                num_predict: 250
                             }
-                        },
-                        required: ["tervNev", "gyakorlatok"]
-                    },
-                    options: {
-                        temperature: 0.3,
-                        num_predict: 250
+                        })
                     }
-                })
+                );
+
+                if (!ollamaResponse.ok) {
+                    throw new Error(
+                        `Ollama hiba: ${ollamaResponse.status} ${ollamaResponse.statusText}`
+                    );
+                }
+
+                const ollamaAdat: any =
+                    await ollamaResponse.json();
+
+                let ajanlas;
+
+                try {
+                    ajanlas = JSON.parse(
+                        ollamaAdat.response
+                    );
+                } catch {
+                    console.log(
+                        `A(z) ${probalkozas}. próbálkozás nem megfelelő JSON.`
+                    );
+                    console.log(
+                        ollamaAdat.response
+                    );
+                    continue;
+                }
+
+                if (
+                    !ajanlasErvenyes(
+                        ajanlas,
+                        sportolo.cel,
+                        sportolo.felszereles
+                    )
+                ) {
+                    console.log(
+                        `A(z) ${probalkozas}. próbálkozás tartalmilag nem megfelelő:`
+                    );
+                    console.log(
+                        JSON.stringify(
+                            ajanlas,
+                            null,
+                            2
+                        )
+                    );
+                    continue;
+                }
+
+                veglegesAjanlas =
+                    katalogusAdatokHozzaadasa(
+                        ajanlas
+                    );
+
+                console.log(
+                    `Sikeres LLM-ajánlás a(z) ${probalkozas}. próbálkozásra.`
+                );
+
+                break;
+            }
+
+            if (!veglegesAjanlas) {
+                return res.status(422).json({
+                    message:
+                        "Az LLM három próbálkozás után sem tudott megfelelő edzéstervet készíteni."
+                });
+            }
+
+            return res.status(200).json({
+                sportolo: {
+                    id: sportolo.id,
+                    nev: sportolo.nev,
+                    cel: sportolo.cel,
+                    felszereles:
+                        sportolo.felszereles
+                },
+                ajanlas: veglegesAjanlas
             });
+        } catch (error) {
+            console.error(error);
 
-            if (!ollamaResponse.ok) {
-                throw new Error(`Ollama hiba: ${ollamaResponse.status} ${ollamaResponse.statusText}`);
-            }
-
-            const ollamaAdat: any = await ollamaResponse.json();
-
-            let ajanlas;
-
-            try {
-                ajanlas = JSON.parse(ollamaAdat.response);
-            } catch {
-                console.log(`A(z) ${probalkozas}. próbálkozás nem megfelelő JSON.`);
-                console.log(ollamaAdat.response);
-                continue;
-            }
-
-            if (!ajanlasErvenyes(ajanlas, sportolo.cel, sportolo.felszereles)) {
-                console.log(`A(z) ${probalkozas}. próbálkozás tartalmilag nem megfelelő:`);
-                console.log(JSON.stringify(ajanlas, null, 2));
-                continue;
-            }
-
-            veglegesAjanlas = katalogusAdatokHozzaadasa(ajanlas);
-
-            console.log(`Sikeres LLM-ajánlás a(z) ${probalkozas}. próbálkozásra.`);
-            break;
+            return res.status(500).json({
+                message:
+                    "Hiba történt az edzésterv-ajánlás elkészítésekor."
+            });
         }
-
-        if (!veglegesAjanlas) {
-            return res.status(422).json({ message: "Az LLM három próbálkozás után sem tudott megfelelő edzéstervet készíteni." });
-        }
-
-        return res.status(200).json({
-            sportolo: {
-                id: sportolo.id,
-                nev: sportolo.nev,
-                cel: sportolo.cel,
-                felszereles: sportolo.felszereles
-            },
-            ajanlas: veglegesAjanlas
-        });
-    } catch (error) {
-        console.error(error);
-
-        return res.status(500).json({ message: "Hiba történt az edzésterv-ajánlás elkészítésekor." });
     }
-});
+);
 
-// Adatbázis-kapcsolat ellenőrzése
+// ==========================================
+// BACKEND INDÍTÁSA
+// ==========================================
+
 async function testDatabaseConnection() {
     try {
-        const connection = await db.getConnection();
-        console.log("MySQL connection successful!");
+        const connection =
+            await db.getConnection();
+
+        console.log(
+            "MySQL connection successful!"
+        );
+
         connection.release();
     } catch (error) {
-        console.error("MySQL connection failed:", error);
+        console.error(
+            "MySQL connection failed:",
+            error
+        );
     }
 }
 
-testDatabaseConnection();
+initializeAuth()
+    .then(() => {
+        testDatabaseConnection();
 
-app.listen(PORT, () => {
-    console.log(`FitTrack backend running on http://localhost:${PORT}`);
-});
+        app.listen(PORT, () => {
+            console.log(
+                `FitTrack backend running on http://localhost:${PORT}`
+            );
+        });
+    })
+    .catch(error => {
+        console.error(
+            "Hitelesítés inicializálási hiba:",
+            error
+        );
+
+        process.exit(1);
+    });

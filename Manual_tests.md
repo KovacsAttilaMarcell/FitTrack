@@ -194,3 +194,43 @@
 - Művelet: Ugyanahhoz a sportolóhoz ismételten edzésterv-ajánlás kérése.
 - Elvárt eredmény: Az adott sportoló korábbi ajánlását az új ajánlás váltja fel, a többi sportoló ajánlása változatlan marad.
 - Eredmény: Sikeres
+
+## 40. Sikeres admin-bejelentkezés
+- Művelet: Bejelentkezés a megfelelő admin felhasználónévvel és jelszóval.
+- Elvárt eredmény: A rendszer sikeresen hitelesíti a felhasználót, megjelenik a FitTrack főoldala és a bejelentkezett felhasználó profiljelzése.
+- Eredmény: Ellenőrzésre vár
+
+## 41. Hibás jelszó kezelése
+- Művelet: Bejelentkezési kísérlet helyes felhasználónévvel, de hibás jelszóval.
+- Elvárt eredmény: A rendszer elutasítja a bejelentkezést, hibaüzenetet jelenít meg, és nem enged hozzáférést a védett funkciókhoz.
+- Eredmény: Ellenőrzésre vár
+
+## 42. Nem létező felhasználónév kezelése
+- Művelet: Bejelentkezési kísérlet nem létező felhasználónévvel.
+- Elvárt eredmény: A rendszer elutasítja a bejelentkezést, és nem ad ki hitelesítési tokent.
+- Eredmény: Ellenőrzésre vár
+
+## 43. API-hozzáférés hitelesítési token nélkül
+- Művelet: GET-kérés küldése a `/api/sportolok` végpontra hitelesítési token nélkül, például Postman segítségével.
+- Elvárt eredmény: A backend HTTP 401-es hibakóddal elutasítja a kérést.
+- Eredmény: Ellenőrzésre vár
+
+## 44. Érvénytelen hitelesítési token kezelése
+- Művelet: GET-kérés küldése a `/api/sportolok` végpontra érvénytelen Bearer tokennel.
+- Elvárt eredmény: A backend HTTP 401-es hibakóddal elutasítja a kérést.
+- Eredmény: Ellenőrzésre vár
+
+## 45. Bejelentkezett állapot megmaradása oldalfrissítés után
+- Művelet: Sikeres admin-bejelentkezés után az oldal frissítése.
+- Elvárt eredmény: A rendszer ellenőrzi a korábban eltárolt tokent, és érvényes token esetén a felhasználó bejelentkezve marad.
+- Eredmény: Ellenőrzésre vár
+
+## 46. Kijelentkezés működése
+- Művelet: Sikeres bejelentkezés után a Kijelentkezés gombra kattintás.
+- Elvárt eredmény: A rendszer törli a böngésző munkamenet-tárolójából a hitelesítési tokent, és visszatér a bejelentkezési képernyőre.
+- Eredmény: Ellenőrzésre vár
+
+## 47. Védett API-hozzáférés kijelentkezés után
+- Művelet: Kijelentkezés után új API-kérés küldése a `/api/sportolok` végpontra hitelesítési token nélkül.
+- Elvárt eredmény: A backend HTTP 401-es hibakóddal elutasítja a kérést.
+- Eredmény: Ellenőrzésre vár

@@ -161,3 +161,16 @@
 **Prompt:** A FitTrack alkalmazás fejlécében található rombusz alakú ikon lecserélése egy konditermi súlyzóikonra a Google Material Symbols `fitness_center` ikonjának felhasználásával, a meglévő színek és elrendezés megtartásával.
 
 **Eredmény:** Az `app.html` fájlban a korábbi rombusz helyére a `fitness_center` ikon került. A fejléc világoskék ikonháttere, a FitTrack felirat és a navigációs sáv megjelenése változatlan maradt.
+
+
+## 33. Bejelentkezési rendszer megvalósítása
+
+**Prompt:** Egészítsd ki a FitTrack Angular és Express alkalmazást bejelentkezési rendszerrel. A backend MySQL adatbázisban tárolja a bejelentkezési fiókokat, a jelszavakat biztonságosan kezelje, és tokenalapú hitelesítéssel védje az API-végpontokat. A meglévő funkciók maradjanak változatlanul használhatók.
+
+**Eredmény:** Elkészült az adminfiókos bejelentkezés, az `auth_fiok` adatbázistábla, a sózott jelszóhash-ek kezelése és a nyolcórás lejáratú, aláírt hitelesítési token használata. Az Angular felület bejelentkezési képernyőt kapott, a védett API-kérések hitelesítést igényelnek, és a kijelentkezés is megvalósult. A Sportoló és Edző szerepkörök továbbra is nyilvántartási célokat szolgálnak, külön bejelentkezési jogosultságok nélkül.
+
+## 34. Bejelentkezett felhasználó profiljelzése
+
+**Prompt:** A FitTrack fejlécében a bejelentkezett felhasználó teljes neve helyett jelenjen meg egy kör alakú, kék hátterű profiljelzés, amely a felhasználónév kezdőbetűjét mutatja. A kijelentkezési funkció és a meglévő elrendezés maradjon meg.
+
+**Eredmény:** Az Angular fejlécben a korábbi `admin` felirat helyett egy kék, kör alakú, fehér A betűs profiljelzés jelenik meg. A kezdőbetű dinamikusan a bejelentkezett felhasználónévből származik, a teljes név pedig a profiljelzés fölé helyezett egérmutatóval megtekinthető. A módosítás az `app.html` és `app.css` fájlokat érintette.

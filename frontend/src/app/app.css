@@ -1,15 +1,71 @@
+
+/* ==========================================
+   FitTrack – Alapstílusok
+   ========================================== */
+
 :host {
     display: block;
     min-height: 100vh;
-    background: #f4f6f8;
-    color: #1f2937;
+    color: #1e293b;
     font-family: Arial, sans-serif;
+
+    --page-accent: #2563eb;
+    --page-bg: linear-gradient(
+        135deg,
+        #dbeafe 0%,
+        #eff6ff 38%,
+        #f8fafc 75%,
+        #e0e7ff 100%
+    );
+
+    background: var(--page-bg);
+    background-attachment: fixed;
 }
+
+/* Felhasználók – zöld */
+:host:has(.toolbar button:nth-child(2).active) {
+    --page-accent: #16a34a;
+    --page-bg: linear-gradient(
+        135deg,
+        #dcfce7 0%,
+        #f0fdf4 38%,
+        #f8fafc 75%,
+        #d1fae5 100%
+    );
+}
+
+/* Edzéstervek – lila */
+:host:has(.toolbar button:nth-child(3).active) {
+    --page-accent: #7c3aed;
+    --page-bg: linear-gradient(
+        135deg,
+        #ede9fe 0%,
+        #f5f3ff 38%,
+        #f8fafc 75%,
+        #e9d5ff 100%
+    );
+}
+
+/* Edzésnapló – narancssárga */
+:host:has(.toolbar button:nth-child(4).active) {
+    --page-accent: #ea580c;
+    --page-bg: linear-gradient(
+        135deg,
+        #ffedd5 0%,
+        #fff7ed 38%,
+        #f8fafc 75%,
+        #fed7aa 100%
+    );
+}
+
+/* ==========================================
+   Konténer és tipográfia
+   ========================================== */
 
 .container {
     width: min(1300px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 50px 0;
+    padding: 26px 0 42px;
 }
 
 h1 {
@@ -18,19 +74,167 @@ h1 {
     color: #1d4ed8;
 }
 
+h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
 .container > p {
     margin: 8px 0 35px;
     color: #6b7280;
 }
 
-section {
-    background: white;
-    padding: 25px;
-    margin-bottom: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+/* ==========================================
+   Fejléc
+   ========================================== */
+
+.app-header {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.055);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: box-shadow 0.25s ease;
 }
 
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 26px 16px;
+}
+
+.brand-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+    color: #1d4ed8;
+    font-size: 22px;
+}
+
+.brand h1 {
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: -0.6px;
+}
+
+.brand p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* ==========================================
+   Navigáció
+   ========================================== */
+
+.toolbar {
+    display: flex;
+    gap: 6px;
+    padding: 12px 20px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.toolbar button {
+    --nav-color: #2563eb;
+    --nav-hover-bg: #eff6ff;
+    --nav-hover-text: #1d4ed8;
+
+    background: transparent;
+    color: #475569;
+    border-radius: 8px;
+    padding: 11px 18px;
+    box-shadow: none;
+}
+
+/* Sportolók */
+.toolbar button:nth-child(1) {
+    --nav-color: #2563eb;
+    --nav-hover-bg: #eff6ff;
+    --nav-hover-text: #1d4ed8;
+}
+
+/* Felhasználók */
+.toolbar button:nth-child(2) {
+    --nav-color: #16a34a;
+    --nav-hover-bg: #f0fdf4;
+    --nav-hover-text: #15803d;
+}
+
+/* Edzéstervek */
+.toolbar button:nth-child(3) {
+    --nav-color: #7c3aed;
+    --nav-hover-bg: #f5f3ff;
+    --nav-hover-text: #6d28d9;
+}
+
+/* Edzésnapló */
+.toolbar button:nth-child(4) {
+    --nav-color: #ea580c;
+    --nav-hover-bg: #fff7ed;
+    --nav-hover-text: #c2410c;
+}
+
+.toolbar button:hover:not(.active) {
+    background: var(--nav-hover-bg);
+    color: var(--nav-hover-text);
+}
+
+.toolbar button.active,
+.toolbar button.active:hover {
+    background: var(--nav-color);
+    color: #fff;
+    box-shadow: 0 4px 12px
+        color-mix(
+            in srgb,
+            var(--nav-color) 22%,
+            transparent
+        );
+}
+
+/* ==========================================
+   Oldaltartalom és kártyák
+   ========================================== */
+
+.main-content {
+    min-height: 45vh;
+}
+
+section {
+    background: #fff;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #e9edf3;
+    border-radius: 15px;
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, 0.055);
+    transition: box-shadow 0.25s ease;
+}
+
+section:hover {
+    box-shadow:
+        0 8px 26px rgba(15, 23, 42, 0.075);
+}
+
+section h2 {
+    letter-spacing: -0.35px;
+}
+
+.page-content > section,
+.page-content .uj-terv-section {
+    margin-bottom: 20px;
+}
+
+.page-content > section:last-child {
+    margin-bottom: 0;
+}
+
+/* Sportolók */
 .sportolok-section {
     border-top: 4px solid #2563eb;
 }
@@ -39,6 +243,7 @@ section {
     color: #1d4ed8;
 }
 
+/* Felhasználók */
 .felhasznalok-section {
     border-top: 4px solid #16a34a;
 }
@@ -47,22 +252,18 @@ section {
     color: #15803d;
 }
 
-.uj-terv-section {
-    border-top: 4px solid #7c3aed;
-}
-
-.uj-terv-section h2 {
-    color: #6d28d9;
-}
-
+/* Edzéstervek */
+.uj-terv-section,
 .edzestervek-section {
     border-top: 4px solid #7c3aed;
 }
 
+.uj-terv-section h2,
 .edzestervek-section h2 {
     color: #6d28d9;
 }
 
+/* Edzésnapló */
 .naplo-section {
     border-top: 4px solid #ea580c;
 }
@@ -70,6 +271,10 @@ section {
 .naplo-section h2 {
     color: #c2410c;
 }
+
+/* ==========================================
+   Grid elrendezések
+   ========================================== */
 
 .felso-grid {
     display: grid;
@@ -90,52 +295,221 @@ section {
     margin-bottom: 25px;
 }
 
-h2 {
-    margin-top: 0;
-    font-size: 24px;
-}
+/* ==========================================
+   Űrlapok és beviteli mezők
+   ========================================== */
 
 .form {
     display: flex;
     gap: 10px;
 }
 
+input,
+.felhasznalo-form select {
+    padding: 11px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font-size: 15px;
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
 input {
     flex: 1;
     min-width: 0;
-    padding: 11px 13px;
-    border: 1px solid #d1d5db;
-    border-radius: 7px;
-    font-size: 15px;
-    outline: none;
-    box-sizing: border-box;
 }
 
-input:focus {
-    border-color: #2563eb;
+.felhasznalo-form select {
+    background: #fff;
+    color: #1f2937;
+    cursor: pointer;
 }
+
+input:hover,
+.felhasznalo-form select:hover {
+    border-color: #94a3b8;
+}
+
+input:focus,
+.felhasznalo-form select:focus {
+    outline: none;
+    border-color: var(--page-accent);
+
+    box-shadow: 0 0 0 3px
+        color-mix(
+            in srgb,
+            var(--page-accent) 15%,
+            transparent
+        );
+}
+
+.sportolo-form,
+.felhasznalo-form {
+    margin-bottom: 20px;
+}
+
+/* ==========================================
+   Gombok
+   ========================================== */
 
 button {
     padding: 11px 18px;
     border: none;
-    border-radius: 7px;
+    border-radius: 9px;
     background: #2563eb;
-    color: white;
+    color: #fff;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     background: #1d4ed8;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 13px rgba(37, 99, 235, 0.17);
 }
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+button:focus-visible {
+    outline: 3px solid var(--page-accent);
+    outline-offset: 3px;
+}
+
+.toolbar button:hover:not(.active) {
+    background: var(--nav-hover-bg);
+    color: var(--nav-hover-text);
+}
+
+.toolbar button.active:hover:not(:disabled) {
+    background: var(--nav-color);
+    color: #fff;
+}
+
+/* ==========================================
+   Sportolók és felhasználók
+   ========================================== */
+
+.sportolok,
+.felhasznalok,
+.naplo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sportolo,
+.felhasznalo {
+    display: grid;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+    background: #f9fafb;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sportolo {
+    grid-template-columns:
+        1fr 1fr 1.5fr auto;
+}
+
+.felhasznalo {
+    grid-template-columns: 1fr auto;
+}
+
+.sportolo:hover,
+.felhasznalo:hover {
+    background: #fff;
+    border-color: #cbd5e1;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.055);
+
+    transform: translateY(-1px);
+}
+
+.sportolo strong,
+.felhasznalo strong {
+    font-size: 16px;
+}
+
+.sportolo span,
+.felhasznalo span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* ==========================================
+   Felhasználói szerepkörök
+   ========================================== */
+
+.szerepkor {
+    width: fit-content;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px !important;
+    font-weight: 700;
+}
+
+.sportolo-szerepkor {
+    color: #1d4ed8 !important;
+    background: #dbeafe;
+}
+
+.edzo-szerepkor {
+    color: #15803d !important;
+    background: #dcfce7;
+}
+
+/* ==========================================
+   Edzéstervek
+   ========================================== */
 
 .terv {
     padding: 20px;
     margin-top: 15px;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
     background: #f9fafb;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.terv:hover {
+    border-color: #ddd6fe;
+
+    box-shadow:
+        0 4px 14px rgba(124, 58, 237, 0.055);
 }
 
 .terv h3 {
@@ -158,8 +532,17 @@ button:hover {
 .gyakorlat {
     padding: 15px;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: white;
+    border-radius: 10px;
+    background: #fff;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.gyakorlat:hover {
+    border-color: #ddd6fe;
+    background: #fefeff;
 }
 
 .gyakorlat strong {
@@ -170,142 +553,25 @@ button:hover {
 
 .sorozat-form {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns:
+        1fr 1fr auto;
     gap: 10px;
 }
 
-.naplo {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.naplo-bejegyzes {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr auto;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #f9fafb;
-}
-
-.naplo-bejegyzes strong {
-    display: block;
-    margin-bottom: 4px;
-}
-
-.naplo-bejegyzes span {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-.naplo-bejegyzes small {
-    color: #6b7280;
-    white-space: nowrap;
-}
-
-.sportolo-form {
-    margin-bottom: 20px;
-}
-
-.sportolok {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.sportolo {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1.5fr auto;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #f9fafb;
-}
-
-.sportolo strong {
-    font-size: 16px;
-}
-
-.sportolo span {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-.felhasznalo-form {
-    margin-bottom: 20px;
-}
-
-.felhasznalo-form select {
-    padding: 11px 13px;
-    border: 1px solid #d1d5db;
-    border-radius: 7px;
-    background: white;
-    color: #1f2937;
-    font-size: 15px;
-    outline: none;
-    cursor: pointer;
-}
-
-.felhasznalo-form select:focus {
-    border-color: #2563eb;
-}
-
-.felhasznalok {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.felhasznalo {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #f9fafb;
-}
-
-.felhasznalo strong {
-    font-size: 16px;
-}
-
-.felhasznalo span {
-    color: #6b7280;
-    font-size: 14px;
-}
-
-.szerepkor {
-    width: fit-content;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 13px !important;
-    font-weight: 600;
-}
-
-.sportolo-szerepkor {
-    color: #1d4ed8 !important;
-    background: #dbeafe;
-}
-
-.edzo-szerepkor {
-    color: #15803d !important;
-    background: #dcfce7;
-}
+/* ==========================================
+   AI-edzésterv-ajánlás
+   ========================================== */
 
 .ajanlas {
     grid-column: 1 / -1;
     margin-top: 5px;
     padding: 18px;
-    border: 1px solid #dbeafe;
-    border-radius: 8px;
-    background: white;
+    border: 1px solid #bfdbfe;
+    border-radius: 11px;
+    background: #fff;
+
+    box-shadow:
+        0 3px 12px rgba(37, 99, 235, 0.045);
 }
 
 .ajanlas h3 {
@@ -326,8 +592,14 @@ button:hover {
     gap: 6px;
     padding: 12px;
     border: 1px solid #e5e7eb;
-    border-radius: 7px;
+    border-radius: 9px;
     background: #f9fafb;
+
+    transition: background-color 0.2s ease;
+}
+
+.ajanlott-gyakorlat:hover {
+    background: #eff6ff;
 }
 
 .ajanlott-gyakorlat strong {
@@ -344,59 +616,325 @@ button:hover {
     grid-column: 1 / -1;
     padding: 10px 12px;
     border: 1px solid #fecaca;
-    border-radius: 7px;
+    border-radius: 9px;
     background: #fef2f2;
     color: #b91c1c;
     font-size: 14px;
 }
 
-@media (max-width: 700px) {
-    .container {
-        width: calc(100% - 24px);
-        padding: 25px 0;
+/* ==========================================
+   Edzésnapló
+   ========================================== */
+
+.naplo-bejegyzes {
+    display: grid;
+    grid-template-columns:
+        1.5fr 1fr auto auto;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+    background: #f9fafb;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.naplo-bejegyzes:hover {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    transform: translateX(3px);
+}
+
+.naplo-bejegyzes strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.naplo-bejegyzes span,
+.naplo-bejegyzes small {
+    color: #6b7280;
+}
+
+.naplo-bejegyzes span {
+    font-size: 14px;
+}
+
+.naplo-bejegyzes small {
+    white-space: nowrap;
+}
+
+/* ==========================================
+   Oldalmegjelenési animáció
+   ========================================== */
+
+@keyframes fittrackFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
     }
 
-    .felso-grid, .also-grid {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-content {
+    animation:
+        fittrackFadeIn 0.3s ease-out;
+}
+
+/* ==========================================
+   BEJELENTKEZÉSI KÉPERNYŐ
+   ========================================== */
+
+.login-screen {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.login-card {
+    width: min(100%, 420px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 34px;
+    background: #fff;
+    border: 1px solid #dbeafe;
+    border-radius: 20px;
+
+    box-shadow:
+        0 18px 55px rgba(30, 64, 175, 0.12);
+
+    animation:
+        fittrackFadeIn 0.35s ease-out;
+}
+
+.login-mark {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 800;
+    font-size: 22px;
+}
+
+.login-card h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 32px;
+}
+
+.login-card p {
+    margin: 0 0 12px;
+    color: #64748b;
+    text-align: center;
+}
+
+.login-card label {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.login-card input {
+    width: 100%;
+}
+
+.login-card button {
+    margin-top: 8px;
+}
+
+.login-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.login-loading {
+    padding: 80px 20px;
+    text-align: center;
+    color: #475569;
+}
+
+.login-userbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 24px 12px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.login-userbar strong {
+    color: #1e293b;
+}
+
+.login-userbar button {
+    padding: 8px 12px;
+    background: #475569;
+}
+
+.login-userbar button:hover:not(:disabled) {
+    background: #334155;
+}
+
+/* ==========================================
+   Reszponzív megjelenés
+   ========================================== */
+
+@media (max-width: 700px) {
+    :host {
+        background-attachment: scroll;
+    }
+
+    .container {
+        width: calc(100% - 24px);
+        padding: 14px 0 30px;
+    }
+
+    .app-header,
+    section {
+        border-radius: 12px;
+    }
+
+    .brand {
+        padding: 16px;
+    }
+
+    .brand h1 {
+        font-size: 26px;
+    }
+
+    .toolbar {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding: 10px 12px 12px;
+    }
+
+    .toolbar button {
+        width: auto;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 10px 13px;
+    }
+
+    .page-content > section {
+        padding: 18px;
+    }
+
+    .felso-grid,
+    .also-grid {
         grid-template-columns: 1fr;
     }
 
-    .form, .sorozat-form {
+    .form,
+    .sorozat-form {
         display: flex;
         flex-direction: column;
     }
 
-    .naplo-bejegyzes, .sportolo, .felhasznalo {
+    .naplo-bejegyzes,
+    .sportolo,
+    .felhasznalo {
         grid-template-columns: 1fr;
         gap: 8px;
     }
 
-    button, .felhasznalo-form select {
+    button,
+    .felhasznalo-form select {
         width: 100%;
+    }
+
+    .toolbar button {
+        width: auto;
+    }
+
+    .sportolo:hover,
+    .felhasznalo:hover,
+    .naplo-bejegyzes:hover {
+        transform: none;
+    }
+
+    .login-card {
+        padding: 24px;
+    }
+
+    .login-userbar {
+        flex-wrap: wrap;
+        padding: 0 14px 12px;
+    }
+
+    .login-userbar button {
+        width: auto;
     }
 }
 
-/* Felső navigáció és oldalankénti elrendezés */
-.container { padding: 26px 0 42px; }
-.app-header { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; box-shadow: 0 2px 12px rgba(15,23,42,.05); margin-bottom: 24px; overflow: hidden; }
-.brand { display: flex; align-items: center; gap: 15px; padding: 20px 26px 16px; }
-.brand-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: #dbeafe; color: #1d4ed8; font-size: 22px; flex-shrink: 0; }
-.brand h1 { font-size: 30px; line-height: 1.15; }
-.brand p { margin: 5px 0 0; color: #6b7280; font-size: 14px; }
-.toolbar { display: flex; gap: 6px; padding: 0 20px 12px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
-.toolbar button { background: transparent; color: #475569; border-radius: 8px; padding: 11px 18px; transition: background .15s, color .15s; }
-.toolbar button:hover { background: #eff6ff; color: #1d4ed8; }
-.toolbar button.active { background: #2563eb; color: #fff; }
-.toolbar button.active:hover { background: #1d4ed8; }
-.main-content { min-height: 45vh; }
-.page-content > section { margin-bottom: 20px; }
-.page-content > section:last-child { margin-bottom: 0; }
-.page-content .uj-terv-section { margin-bottom: 20px; }
-button:disabled { opacity: .6; cursor: not-allowed; }
-@media (max-width: 700px) {
-    .container { padding: 14px 0 30px; }
-    .brand { padding: 16px; }
-    .brand h1 { font-size: 26px; }
-    .toolbar { overflow-x: auto; padding: 10px 12px 12px; flex-wrap: nowrap; }
-    .toolbar button { width: auto; flex: 0 0 auto; white-space: nowrap; padding: 10px 13px; }
-    .page-content > section { padding: 18px; }
+/* ==========================================
+   Akadálymentesség
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .page-content,
+    .login-card {
+        animation: none;
+    }
+
+    .app-header,
+    section,
+    button,
+    input,
+    .felhasznalo-form select,
+    .sportolo,
+    .felhasznalo,
+    .terv,
+    .gyakorlat,
+    .ajanlas,
+    .ajanlott-gyakorlat,
+    .naplo-bejegyzes {
+        transition: none;
+    }
+}
+
+/* Bejelentkezett felhasználó profil ikonja */
+
+.login-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: #ffffff !important;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    box-shadow: 0 3px 9px rgba(37, 99, 235, 0.18);
+    user-select: none;
 }
